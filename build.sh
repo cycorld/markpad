@@ -10,12 +10,14 @@ swift build -c release
 BIN="$(swift build -c release --show-bin-path)/$APP"
 
 [ -f Assets/AppIcon.icns ] || swift Scripts/make-icon.swift Assets/AppIcon.icns
+[ -d Assets/vendor ] || ./Scripts/fetch-vendor.sh
 
 rm -rf "$OUT"
 mkdir -p "$OUT/Contents/MacOS" "$OUT/Contents/Resources"
 cp "$BIN" "$OUT/Contents/MacOS/"
 cp Info.plist "$OUT/Contents/"
 cp Assets/AppIcon.icns "$OUT/Contents/Resources/"
+cp -R Assets/vendor "$OUT/Contents/Resources/vendor"
 codesign --force --sign - "$OUT"
 echo "built $OUT"
 

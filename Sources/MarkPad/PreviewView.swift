@@ -22,15 +22,18 @@ struct PreviewView: NSViewRepresentable {
         context.coordinator.update(html: html, baseURL: pageBaseURL, in: web)
     }
 
-    /// `markpad:///abs/dir/` so relative images resolve through `LocalFileSchemeHandler`.
+    /// `markpad:///abs/dir/` so relative images resolve through `LocalFileSchemeHandler`. Untitled documents
+    /// get the filesystem root, which keeps the page on the same origin as the bundled KaTeX/Mermaid assets.
     private var pageBaseURL: URL? {
-        guard let dir = baseURL else { return nil }
-        var parts = URLComponents()
-        parts.scheme = LocalFileSchemeHandler.scheme
-        parts.host = ""
-        parts.path = dir.path.hasSuffix("/") ? dir.path : dir.path + "/"
-        return parts.url
+        LocalFileSchemeHandler.url(forDirectory: baseURL ?? URL(fileURLWithPath: "/"))
     }
+
+    /// Page shell with the bundled vendor directory baked in.
+    private static let shell: String = {
+        let resources = Bundle.main.resourceURL ?? Bundle.main.bundleURL
+        let vendor = LocalFileSchemeHandler.url(forDirectory: resources.appendingPathComponent("vendor"))
+        return PreviewTemplate.page(vendorURL: vendor?.absoluteString ?? "")
+    }()
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         private var shellLoaded = false
@@ -42,7 +45,7 @@ struct PreviewView: NSViewRepresentable {
             shellLoaded = false
             currentBase = baseURL
             pending = lastHTML
-            web.loadHTMLString(PreviewTemplate.page, baseURL: baseURL)
+            web.loadHTMLString(PreviewView.shell, baseURL: baseURL)
         }
 
         func update(html: String, baseURL: URL?, in web: WKWebView) {

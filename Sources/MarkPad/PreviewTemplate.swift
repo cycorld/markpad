@@ -1,5 +1,13 @@
+import Foundation
+
 enum PreviewTemplate {
-    static let page = """
+    /// The page shell. `vendorURL` is the `markpad://` directory holding katex/ and mermaid/.
+    static func page(vendorURL: String) -> String {
+        let json = (try? JSONEncoder().encode(vendorURL)).flatMap { String(data: $0, encoding: .utf8) } ?? "\"\""
+        return template.replacingOccurrences(of: "__VENDOR__", with: json)
+    }
+
+    private static let template = """
     <!doctype html>
     <html>
     <head>
@@ -8,12 +16,12 @@ enum PreviewTemplate {
     :root {
       color-scheme: light dark;
       --fg: #1f2328; --bg: #ffffff; --muted: #59636e; --border: #d8dee4;
-      --code-bg: #f6f8fa; --link: #0969da; --quote: #57606a; --mark: #fff8c5;
+      --code-bg: #f6f8fa; --link: #0969da; --quote: #57606a; --mark: #fff8c5; --error: #d1242f;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --fg: #e6edf3; --bg: #1e1e1e; --muted: #9198a1; --border: #3d444d;
-        --code-bg: #2a2a2a; --link: #4493f8; --quote: #9198a1; --mark: #5a4a00;
+        --code-bg: #2a2a2a; --link: #4493f8; --quote: #9198a1; --mark: #5a4a00; --error: #ff7b72;
       }
     }
     * { box-sizing: border-box; }
@@ -52,12 +60,85 @@ enum PreviewTemplate {
     mark { background: var(--mark); color: inherit; }
     del { color: var(--muted); }
     ::selection { background: rgba(9, 105, 218, .25); }
+    .math-display { display: block; text-align: center; margin: 1em 0; overflow-x: auto; }
+    .katex-display { margin: 0; }
+    .mermaid { margin: 0 0 1em; text-align: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .mermaid-error { margin: 0 0 1em; padding: 14px 16px; border-radius: 8px; background: var(--code-bg);
+      color: var(--error); font-family: "SF Mono", Menlo, ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
     </style>
     </head>
     <body>
     <div id="c"></div>
     <script>
-    window.__set = function (html) { document.getElementById('c').innerHTML = html; };
+    var VENDOR = __VENDOR__;
+    var loading = {};
+    function loadScript(src) {
+      if (!loading[src]) loading[src] = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = src; s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return loading[src];
+    }
+    function loadStyle(href) {
+      if (document.querySelector('link[href="' + href + '"]')) return;
+      var l = document.createElement('link');
+      l.rel = 'stylesheet'; l.href = href;
+      document.head.appendChild(l);
+    }
+
+    var generation = 0, lastHTML = '';
+    window.__set = function (html) {
+      lastHTML = html;
+      var gen = ++generation;
+      var root = document.getElementById('c');
+      root.innerHTML = html;
+      renderMath(root, gen);
+      renderDiagrams(root, gen);
+    };
+
+    // KaTeX: loaded the first time a document contains a math span.
+    async function renderMath(root, gen) {
+      var nodes = root.querySelectorAll('.math');
+      if (!nodes.length) return;
+      loadStyle(VENDOR + 'katex/katex.min.css');
+      try { await loadScript(VENDOR + 'katex/katex.min.js'); } catch (e) { return; }
+      if (gen !== generation) return;
+      nodes.forEach(function (el) {
+        katex.render(el.textContent, el, { displayMode: el.classList.contains('math-display'), throwOnError: false });
+      });
+    }
+
+    // Mermaid: loaded the first time a document contains a ```mermaid block. Rendered SVG is cached per source.
+    var diagramCache = new Map(), diagramSeq = 0;
+    async function renderDiagrams(root, gen) {
+      var blocks = root.querySelectorAll('pre > code.language-mermaid');
+      if (!blocks.length) return;
+      try { await loadScript(VENDOR + 'mermaid/mermaid.min.js'); } catch (e) { return; }
+      if (gen !== generation) return;
+      var dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+      for (var i = 0; i < blocks.length; i++) {
+        var code = blocks[i], src = code.textContent, key = (dark ? 'd' : 'l') + src;
+        var svg = diagramCache.get(key);
+        if (svg === undefined) {
+          var id = 'mmd' + (++diagramSeq);
+          try { svg = (await mermaid.render(id, src)).svg; }
+          catch (e) { svg = null; var stray = document.getElementById('d' + id); if (stray) stray.remove(); }
+          diagramCache.set(key, svg);
+        }
+        if (gen !== generation) return;
+        var host = document.createElement('div');
+        if (svg) { host.className = 'mermaid'; host.innerHTML = svg; }
+        else { host.className = 'mermaid-error'; host.textContent = src; }
+        code.parentElement.replaceWith(host);
+      }
+    }
+
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      if (lastHTML) window.__set(lastHTML);
+    });
     </script>
     </body>
     </html>

@@ -5,6 +5,15 @@ import WebKit
 final class LocalFileSchemeHandler: NSObject, WKURLSchemeHandler {
     static let scheme = "markpad"
 
+    /// `markpad:///abs/dir/` for a local directory, so relative references inside resolve through this handler.
+    static func url(forDirectory directory: URL) -> URL? {
+        var parts = URLComponents()
+        parts.scheme = scheme
+        parts.host = ""
+        parts.path = directory.path.hasSuffix("/") ? directory.path : directory.path + "/"
+        return parts.url
+    }
+
     /// Maps a `markpad://` link back to a `file://` URL; other URLs pass through untouched.
     static func externalURL(for url: URL) -> URL {
         url.scheme == scheme ? URL(fileURLWithPath: url.path) : url

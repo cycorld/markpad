@@ -13,5 +13,10 @@ let package = Package(
             dependencies: [.product(name: "Markdown", package: "swift-markdown")],
             path: "Sources/MarkPad"
         ),
+        .testTarget(
+            name: "MarkPadTests",
+            dependencies: ["MarkPad"],
+            path: "Tests/MarkPadTests"
+        ),
     ]
 )
