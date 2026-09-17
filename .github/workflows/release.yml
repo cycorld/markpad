@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unit tests
+        run: swift test
+
+      - name: Package app
+        run: ./build.sh
+
+      - name: Zip
+        run: ditto -c -k --keepParent dist/MarkPad.app "MarkPad-${GITHUB_REF_NAME}.zip"
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MarkPad-${{ github.ref_name }}.zip
+          generate_release_notes: true
+          body: |
+            The app is ad-hoc signed, not notarized. After unzipping, either right-click → Open the first time,
+            or run `xattr -d com.apple.quarantine MarkPad.app`.

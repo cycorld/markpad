@@ -1,7 +1,7 @@
 import Foundation
 
 enum PreviewTemplate {
-    /// The page shell. `vendorURL` is the `markpad://` directory holding katex/ and mermaid/.
+    /// The page shell. `vendorURL` is the `markpad://` directory holding katex/, mermaid/ and highlight/.
     static func page(vendorURL: String) -> String {
         let json = (try? JSONEncoder().encode(vendorURL)).flatMap { String(data: $0, encoding: .utf8) } ?? "\"\""
         return template.replacingOccurrences(of: "__VENDOR__", with: json)
@@ -66,6 +66,7 @@ enum PreviewTemplate {
     .mermaid svg { max-width: 100%; height: auto; }
     .mermaid-error { margin: 0 0 1em; padding: 14px 16px; border-radius: 8px; background: var(--code-bg);
       color: var(--error); font-family: "SF Mono", Menlo, ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+    pre code.hljs { padding: 0; background: transparent; }
     </style>
     </head>
     <body>
@@ -81,10 +82,11 @@ enum PreviewTemplate {
       });
       return loading[src];
     }
-    function loadStyle(href) {
+    function loadStyle(href, media) {
       if (document.querySelector('link[href="' + href + '"]')) return;
       var l = document.createElement('link');
       l.rel = 'stylesheet'; l.href = href;
+      if (media) l.media = media;
       document.head.appendChild(l);
     }
 
@@ -96,6 +98,7 @@ enum PreviewTemplate {
       root.innerHTML = html;
       renderMath(root, gen);
       renderDiagrams(root, gen);
+      renderCode(root, gen);
     };
 
     // KaTeX: loaded the first time a document contains a math span.
@@ -133,6 +136,42 @@ enum PreviewTemplate {
         if (svg) { host.className = 'mermaid'; host.innerHTML = svg; }
         else { host.className = 'mermaid-error'; host.textContent = src; }
         code.parentElement.replaceWith(host);
+      }
+    }
+
+    // highlight.js: loaded the first time a document has a fenced block with a language. Languages outside the
+    // common bundle are fetched on demand from highlight/languages/. Highlighted markup is cached per source.
+    var codeCache = new Map();
+    function languageOf(code) {
+      for (var i = 0; i < code.classList.length; i++) {
+        var cls = code.classList[i];
+        if (cls.indexOf('language-') === 0) return cls.slice(9);
+      }
+      return null;
+    }
+    async function renderCode(root, gen) {
+      var blocks = root.querySelectorAll('pre > code[class*="language-"]:not(.language-mermaid)');
+      if (!blocks.length) return;
+      loadStyle(VENDOR + 'highlight/github.min.css', '(prefers-color-scheme: light)');
+      loadStyle(VENDOR + 'highlight/github-dark.min.css', '(prefers-color-scheme: dark)');
+      try { await loadScript(VENDOR + 'highlight/highlight.min.js'); } catch (e) { return; }
+      if (gen !== generation) return;
+      for (var i = 0; i < blocks.length; i++) {
+        var code = blocks[i], lang = languageOf(code);
+        if (!lang) continue;
+        if (!hljs.getLanguage(lang)) {
+          try { await loadScript(VENDOR + 'highlight/languages/' + encodeURIComponent(lang) + '.min.js'); } catch (e) {}
+          if (gen !== generation) return;
+          if (!hljs.getLanguage(lang)) continue;
+        }
+        var key = lang + '|' + code.textContent;
+        var cached = codeCache.get(key);
+        if (cached === undefined) {
+          cached = hljs.highlight(code.textContent, { language: lang }).value;
+          codeCache.set(key, cached);
+        }
+        code.innerHTML = cached;
+        code.classList.add('hljs');
       }
     }
 

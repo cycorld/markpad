@@ -1,5 +1,9 @@
 # MarkPad
 
+[![CI](https://github.com/cycorld/markpad/actions/workflows/ci.yml/badge.svg)](https://github.com/cycorld/markpad/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/cycorld/markpad?display_name=tag)](https://github.com/cycorld/markpad/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A small native markdown editor for macOS: edit on the left, live preview on the right. SwiftUI + `NSTextView` + `WKWebView`, no Electron.
 
 macOS용 간편 마크다운 에디터. 왼쪽 편집, 오른쪽 실시간 미리보기.
@@ -13,12 +17,17 @@ macOS용 간편 마크다운 에디터. 왼쪽 편집, 오른쪽 실시간 미�
 - **Markdown** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM tables, strikethrough, task lists)
 - **Math** — `$inline$` and `$$display$$` via KaTeX (Pandoc/Obsidian rules: no space after the opening `$`, `\$` is a literal dollar, code is never touched)
 - **Diagrams** — ```` ```mermaid ```` blocks via Mermaid, dark theme aware
+- **Code** — fenced blocks with a language are highlighted by highlight.js (GitHub light/dark themes); languages outside the common bundle load on demand
 - **Documents** — New / Open / Save / autosave / window restoration; owns `.md` `.markdown` `.mdown` `.mkd`
 - **View modes** — Editor (⌘1) · Split (⌘2) · Preview (⌘3)
 - **Local images** — paths relative to the document work (served through a `markpad://` URL scheme handler, no private API)
-- KaTeX and Mermaid are bundled but loaded lazily — documents without math or diagrams never pay for them
+- KaTeX, Mermaid and highlight.js are bundled but loaded lazily — a document only pays for what it uses
 
-## Build
+## Install
+
+Grab `MarkPad-vX.Y.Z.zip` from the [latest release](https://github.com/cycorld/markpad/releases/latest), unzip, drag `MarkPad.app` to `/Applications`. The app is ad-hoc signed and not notarized, so the first launch needs right-click → Open (or `xattr -d com.apple.quarantine /Applications/MarkPad.app`). Requires macOS 14 or newer.
+
+## Build from source
 
 Requires Xcode 16+ (Swift 5.9 toolchain) and macOS 14+.
 
@@ -27,7 +36,7 @@ Requires Xcode 16+ (Swift 5.9 toolchain) and macOS 14+.
 ./build.sh --install  # also copies it to /Applications
 ```
 
-The first build generates the app icon (`Scripts/make-icon.swift`) and downloads pinned KaTeX/Mermaid builds (`Scripts/fetch-vendor.sh`) into `Assets/`.
+The first build generates the app icon (`Scripts/make-icon.swift`) and downloads pinned KaTeX/Mermaid/highlight.js builds (`Scripts/fetch-vendor.sh`) into `Assets/`.
 
 To make MarkPad the default app for `.md` files: Finder → Get Info on any `.md` → Open With → MarkPad → Change All.
 
@@ -41,7 +50,7 @@ Sources/MarkPad/
   EditorView.swift              split layout, toolbar, debounced render
   MarkdownTextView.swift        NSTextView wrapper
   PreviewView.swift             WKWebView wrapper (shell loads once, body swapped via JS)
-  PreviewTemplate.swift         HTML shell, CSS, lazy KaTeX/Mermaid loader
+  PreviewTemplate.swift         HTML shell, CSS, lazy KaTeX/Mermaid/highlight.js loader
   MarkdownRenderer.swift        markdown → HTML pipeline
   HTMLRenderer.swift            AST → HTML with escaping and heading ids (derived from swift-markdown)
   MathProtector.swift           lifts $…$ spans out before parsing, splices them back after
@@ -49,6 +58,10 @@ Sources/MarkPad/
 Scripts/                        make-icon.swift, fetch-vendor.sh
 build.sh                        assembles the .app bundle
 ```
+
+## Contributing
+
+Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Security problems: [SECURITY.md](SECURITY.md). Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

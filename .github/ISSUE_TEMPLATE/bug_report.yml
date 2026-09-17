@@ -1,0 +1,39 @@
+name: Bug report
+description: Something renders wrong, crashes, or misbehaves
+labels: [bug]
+body:
+  - type: textarea
+    id: markdown
+    attributes:
+      label: Markdown that triggers it
+      description: The smallest snippet that shows the problem.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: A screenshot of the preview pane helps a lot.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: MarkPad version / commit
+      placeholder: "0.1.0, or a commit hash if built from source"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "26.0"
+    validations:
+      required: true
