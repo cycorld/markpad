@@ -40,6 +40,16 @@ final class MathProtectorTests: XCTestCase {
         XCTAssertTrue(html.contains("<span class=\"math\">a&lt;b</span>"), html)
     }
 
+    func testDisplayMathKeepsLineNumbersOfLaterHeadings() {
+        let result = MarkdownRenderer.render("# A\n\n$$\nx\ny\n$$\n\n# B")
+        XCTAssertEqual(result.headings.map(\.line), [1, 8])
+        XCTAssertEqual(result.headings.map(\.text), ["A", "B"])
+    }
+
+    func testHeadingTextDropsMathPlaceholder() {
+        XCTAssertEqual(MarkdownRenderer.render("# Energy $E=mc^2$ now").headings.first?.text, "Energy  now")
+    }
+
     func testMathInsideHeading() {
         let html = render("# Energy $E=mc^2$")
         XCTAssertTrue(html.contains("<h1 id=\"energy\">Energy <span class=\"math\">E=mc^2</span></h1>"), html)

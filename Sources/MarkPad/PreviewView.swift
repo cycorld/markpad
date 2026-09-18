@@ -5,6 +5,7 @@ import WebKit
 struct PreviewView: NSViewRepresentable {
     let html: String
     let baseURL: URL?
+    var jump: JumpRequest? = nil
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -20,6 +21,7 @@ struct PreviewView: NSViewRepresentable {
 
     func updateNSView(_ web: WKWebView, context: Context) {
         context.coordinator.update(html: html, baseURL: pageBaseURL, in: web)
+        if let jump { context.coordinator.jump(to: jump, in: web) }
     }
 
     /// `markpad:///abs/dir/` so relative images resolve through `LocalFileSchemeHandler`. Untitled documents
@@ -29,7 +31,7 @@ struct PreviewView: NSViewRepresentable {
     }
 
     /// Page shell with the bundled vendor directory baked in.
-    private static let shell: String = {
+    static let shell: String = {
         let resources = Bundle.main.resourceURL ?? Bundle.main.bundleURL
         let vendor = LocalFileSchemeHandler.url(forDirectory: resources.appendingPathComponent("vendor"))
         return PreviewTemplate.page(vendorURL: vendor?.absoluteString ?? "")
@@ -40,6 +42,16 @@ struct PreviewView: NSViewRepresentable {
         private var currentBase: URL?
         private var lastHTML: String?
         private var pending: String?
+        private var lastJump: UUID?
+
+        func jump(to request: JumpRequest, in web: WKWebView) {
+            guard request.token != lastJump, shellLoaded else { return }
+            lastJump = request.token
+            guard let data = try? JSONEncoder().encode(request.heading.id),
+                  let json = String(data: data, encoding: .utf8)
+            else { return }
+            web.evaluateJavaScript("window.__jump(\(json))")
+        }
 
         func loadShell(baseURL: URL?, in web: WKWebView) {
             shellLoaded = false

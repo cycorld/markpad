@@ -4,6 +4,20 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-18
+
+### Added
+- `[TOC]` / `[[toc]]` paragraph expands to a nested table of contents
+- Outline sidebar (⌥⌘S) with click-to-jump in both editor and preview
+- Printing (⌘P) of the rendered document with configurable header / footer (Settings → Print): `{title}` `{file}` `{page}` `{pages}` `{date}` `{time}` tokens, four page-number styles
+- Export as PDF (⌥⌘P) and headless `MarkPad --export-pdf in.md out.pdf`
+- Page Setup (⇧⌘P)
+- Print stylesheet: light colors, no page breaks inside code, tables, diagrams and math
+
+### Changed
+- Duplicate headings get unique anchor ids (`-1`, `-2`, …)
+- Display math no longer shifts source line numbers of later headings
+
 ## [0.1.0] - 2026-09-18
 
 ### Added
@@ -18,5 +32,6 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/cycorld/markpad/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/cycorld/markpad/releases/tag/v0.1.0

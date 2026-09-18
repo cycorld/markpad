@@ -14,18 +14,30 @@
 import Foundation
 import Markdown
 
+/// A heading found while rendering; feeds the `[TOC]` block and the outline sidebar.
+struct HeadingInfo: Identifiable, Equatable {
+    /// Unique anchor id (GitHub-style slug, `-1`, `-2`… appended on collisions).
+    let id: String
+    let level: Int
+    let text: String
+    /// 1-based source line, 0 when unknown.
+    let line: Int
+}
+
 /// Markdown AST → HTML with proper escaping.
 struct HTMLRenderer: MarkupWalker {
     private(set) var result = ""
+    private(set) var headings: [HeadingInfo] = []
 
+    private var usedIds: [String: Int] = [:]
     private var inTableHead = false
     private var tableColumnAlignments: [Table.ColumnAlignment?]?
     private var currentTableColumn = 0
 
-    static func render(_ markdown: String) -> String {
+    static func render(_ markdown: String) -> (html: String, headings: [HeadingInfo]) {
         var renderer = HTMLRenderer()
         renderer.visit(Document(parsing: markdown))
-        return renderer.result
+        return (renderer.result, renderer.headings)
     }
 
     static func escape(_ text: String) -> String {
@@ -43,22 +55,38 @@ struct HTMLRenderer: MarkupWalker {
         return out
     }
 
-    /// GitHub-style anchor id. Lifted math placeholders are skipped so their indices don't leak in.
-    private static func slug(_ text: String) -> String {
+    /// Plain text with lifted math placeholders removed.
+    static func stripPlaceholders(_ text: String) -> String {
         var out = ""
         var inPlaceholder = false
-        for ch in text.lowercased() {
+        for ch in text {
             if ch == MathProtector.marker {
                 inPlaceholder.toggle()
-            } else if inPlaceholder {
-                continue
-            } else if ch.isLetter || ch.isNumber || ch == "_" {
+            } else if !inPlaceholder {
+                out.append(ch)
+            }
+        }
+        return out
+    }
+
+    /// GitHub-style anchor id.
+    private static func slug(_ text: String) -> String {
+        var out = ""
+        for ch in stripPlaceholders(text).lowercased() {
+            if ch.isLetter || ch.isNumber || ch == "_" {
                 out.append(ch)
             } else if ch == " " || ch == "-" {
                 out.append("-")
             }
         }
         return out.trimmingCharacters(in: CharacterSet(charactersIn: "-"))
+    }
+
+    private mutating func uniqueId(for text: String) -> String {
+        let base = Self.slug(text)
+        let seen = usedIds[base, default: 0]
+        usedIds[base] = seen + 1
+        return seen == 0 ? base : "\(base)-\(seen)"
     }
 
     mutating func defaultVisit(_ markup: Markup) {
@@ -79,7 +107,14 @@ struct HTMLRenderer: MarkupWalker {
     }
 
     mutating func visitHeading(_ heading: Heading) {
-        result += "<h\(heading.level) id=\"\(Self.slug(heading.plainText))\">"
+        let id = uniqueId(for: heading.plainText)
+        headings.append(HeadingInfo(
+            id: id,
+            level: heading.level,
+            text: Self.stripPlaceholders(heading.plainText).trimmingCharacters(in: .whitespaces),
+            line: heading.range?.lowerBound.line ?? 0
+        ))
+        result += "<h\(heading.level) id=\"\(id)\">"
         descendInto(heading)
         result += "</h\(heading.level)>\n"
     }

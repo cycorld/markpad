@@ -67,6 +67,20 @@ enum PreviewTemplate {
     .mermaid-error { margin: 0 0 1em; padding: 14px 16px; border-radius: 8px; background: var(--code-bg);
       color: var(--error); font-family: "SF Mono", Menlo, ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
     pre code.hljs { padding: 0; background: transparent; }
+    nav.toc { margin: 0 0 1.5em; padding: 12px 18px; background: var(--code-bg); border-radius: 8px; font-size: .95em; }
+    nav.toc ul { list-style: none; margin: 0; padding-left: 1.2em; }
+    nav.toc > ul { padding-left: 0; }
+    nav.toc li { margin: .2em 0; }
+    nav.toc:empty { display: none; }
+    @media print {
+      :root { --fg: #1f2328; --bg: #ffffff; --muted: #59636e; --border: #d8dee4; --code-bg: #f6f8fa;
+              --link: #0969da; --quote: #57606a; --mark: #fff8c5; --error: #d1242f; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11pt; }
+      #c { max-width: none; padding: 0; }
+      pre, table, blockquote, img, .mermaid, .math-display, nav.toc { break-inside: avoid; }
+      h1, h2, h3, h4 { break-after: avoid; }
+      a { color: inherit; }
+    }
     </style>
     </head>
     <body>
@@ -91,14 +105,21 @@ enum PreviewTemplate {
     }
 
     var generation = 0, lastHTML = '';
+    // Resolves once math, diagrams, code and images have settled (used by the print pipeline).
     window.__set = function (html) {
       lastHTML = html;
       var gen = ++generation;
       var root = document.getElementById('c');
       root.innerHTML = html;
-      renderMath(root, gen);
-      renderDiagrams(root, gen);
-      renderCode(root, gen);
+      var images = Array.prototype.map.call(root.querySelectorAll('img'), function (img) {
+        return img.complete ? null : new Promise(function (r) { img.onload = img.onerror = r; });
+      });
+      return Promise.all([renderMath(root, gen), renderDiagrams(root, gen), renderCode(root, gen)].concat(images))
+        .then(function () { return document.fonts.ready; });
+    };
+    window.__jump = function (id) {
+      var el = document.getElementById(id);
+      if (el) el.scrollIntoView({ block: 'start' });
     };
 
     // KaTeX: loaded the first time a document contains a math span.

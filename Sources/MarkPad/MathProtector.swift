@@ -59,14 +59,16 @@ enum MathProtector {
             if c == "$" {
                 if i + 1 < chars.count, chars[i + 1] == "$" {
                     if let close = closingDollars(chars, from: i + 2) {
-                        spans.append(Span(tex: String(chars[(i + 2)..<close]), display: true))
-                        out.append(placeholder(spans.count - 1))
+                        let tex = String(chars[(i + 2)..<close])
+                        spans.append(Span(tex: tex, display: true))
+                        out.append(placeholder(spans.count - 1, preservingLinesOf: tex))
                         i = close + 2
                         continue
                     }
                 } else if let close = closingInlineDollar(chars, from: i + 1) {
-                    spans.append(Span(tex: String(chars[(i + 1)..<close]), display: false))
-                    out.append(placeholder(spans.count - 1))
+                    let tex = String(chars[(i + 1)..<close])
+                    spans.append(Span(tex: tex, display: false))
+                    out.append(placeholder(spans.count - 1, preservingLinesOf: tex))
                     i = close + 1
                     continue
                 }
@@ -103,8 +105,9 @@ enum MathProtector {
 
     // MARK: - Scanning helpers
 
-    private static func placeholder(_ index: Int) -> String {
-        "\(marker)\(index)\(marker)"
+    /// The placeholder keeps the span's newlines after it so source line numbers of later headings stay correct.
+    private static func placeholder(_ index: Int, preservingLinesOf tex: String) -> String {
+        "\(marker)\(index)\(marker)" + String(repeating: "\n", count: tex.filter { $0 == "\n" }.count)
     }
 
     private static func lineEnd(_ chars: [Character], from i: Int) -> Int {
