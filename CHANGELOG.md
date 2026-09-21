@@ -4,6 +4,13 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-21
+
+### Added
+- Universal binary: releases now run on Intel Macs as well as Apple silicon
+- `SHA256SUMS.txt` attached to every release
+- Step-by-step install guide in the README, plus a Korean README (`README.ko.md`)
+
 ## [0.2.0] - 2026-09-18
 
 ### Added
@@ -32,6 +39,7 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/cycorld/markpad/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/cycorld/markpad/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/cycorld/markpad/releases/tag/v0.1.0

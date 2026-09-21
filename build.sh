@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Builds dist/MarkPad.app. Pass --install to copy it into /Applications.
+# Builds dist/MarkPad.app as a universal (arm64 + x86_64) binary. Pass --install to copy it into /Applications.
 set -euo pipefail
 cd "$(dirname "$0")"
 
 APP=MarkPad
 OUT="dist/$APP.app"
+ARCHS=(--arch arm64 --arch x86_64)
 
-swift build -c release
-BIN="$(swift build -c release --show-bin-path)/$APP"
+swift build -c release "${ARCHS[@]}"
+BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/$APP"
 
 [ -f Assets/AppIcon.icns ] || swift Scripts/make-icon.swift Assets/AppIcon.icns
 [ -d Assets/vendor ] || ./Scripts/fetch-vendor.sh

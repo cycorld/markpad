@@ -23,11 +23,19 @@ jobs:
       - name: Zip
         run: ditto -c -k --keepParent dist/MarkPad.app "MarkPad-${GITHUB_REF_NAME}.zip"
 
+      - name: Checksums
+        run: shasum -a 256 "MarkPad-${GITHUB_REF_NAME}.zip" > SHA256SUMS.txt
+
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          files: MarkPad-${{ github.ref_name }}.zip
+          files: |
+            MarkPad-${{ github.ref_name }}.zip
+            SHA256SUMS.txt
           generate_release_notes: true
           body: |
-            The app is ad-hoc signed, not notarized. After unzipping, either right-click → Open the first time,
-            or run `xattr -d com.apple.quarantine MarkPad.app`.
+            Universal binary (Apple silicon + Intel), macOS 14 or later.
+
+            The app is ad-hoc signed and not notarized, so macOS blocks the first launch.
+            Either allow it in System Settings → Privacy & Security → "Open Anyway", or run
+            `xattr -d com.apple.quarantine /Applications/MarkPad.app`. See the README's Install section.
