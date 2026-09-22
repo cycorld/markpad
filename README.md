@@ -12,7 +12,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 
 ## Features
 
-- **Editor** — `NSTextView`: monospaced, smart quotes/dashes/autocorrect off, find bar (⌘F), undo
+- **Editor** — `NSTextView`: monospaced, smart quotes/dashes/autocorrect off, undo, find and replace (⌘F / ⌥⌘F) with incremental highlighting
 - **Preview** — `WKWebView` with GitHub-flavoured styling, follows system dark mode, keeps scroll position while typing
 - **Markdown** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM tables, strikethrough, task lists)
 - **Math** — `$inline$` and `$$display$$` via KaTeX (Pandoc/Obsidian rules: no space after the opening `$`, `\$` is a literal dollar, code is never touched)
@@ -112,7 +112,9 @@ The first build generates the app icon (`Scripts/make-icon.swift`) and downloads
 | New / Open / Save | ⌘N / ⌘O / ⌘S |
 | Editor only / Split / Preview only | ⌘1 / ⌘2 / ⌘3 |
 | Toggle outline sidebar | ⌥⌘S |
-| Find in editor | ⌘F |
+| Find / Find and Replace | ⌘F / ⌥⌘F |
+| Find next / previous | ⌘G / ⇧⌘G |
+| Use selection for find · Hide find bar | ⌘E · ⇧⌘F |
 | Print | ⌘P |
 | Export as PDF | ⌥⌘P |
 | Page Setup (paper size, orientation) | ⇧⌘P |

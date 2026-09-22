@@ -4,6 +4,14 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-09-22
+
+### Added
+- Edit → Find submenu: Find (⌘F), Find and Replace (⌥⌘F), Find Next / Previous (⌘G / ⇧⌘G), Use Selection for Find (⌘E), Hide Find Bar (⇧⌘F). In preview-only mode the window switches to split view so the editor can be searched
+
+### Fixed
+- ⌘F did nothing: the find bar was enabled on the editor but no menu item triggered it
+
 ## [0.2.1] - 2026-09-21
 
 ### Added
@@ -39,7 +47,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/cycorld/markpad/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/cycorld/markpad/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/cycorld/markpad/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/cycorld/markpad/releases/tag/v0.1.0

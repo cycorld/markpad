@@ -10,6 +10,9 @@ struct MarkPadApp: App {
             EditorView(document: file.$document, fileURL: file.fileURL)
         }
         .commands {
+            CommandGroup(after: .pasteboard) {
+                FindCommands()
+            }
             CommandGroup(after: .toolbar) {
                 ViewCommands()
                 Divider()
