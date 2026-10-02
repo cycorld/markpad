@@ -4,6 +4,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-02
+
 ### Added
 - Dual Editor Modes: choose between **Plain Text (Source)** and **Live WYSIWYG**.
 - Live WYSIWYG editing powered by `swift-markdown-engine` (TextKit 2 AppKit native live markdown styling: headings, bold/italic, lists, checkboxes, and inline formatting).
@@ -61,7 +63,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/cycorld/markpad/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/cycorld/markpad/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/cycorld/markpad/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/cycorld/markpad/compare/v0.2.0...v0.2.1
