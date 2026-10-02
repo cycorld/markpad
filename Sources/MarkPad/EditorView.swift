@@ -43,11 +43,11 @@ struct EditorView: View {
                 OutlineView(headings: headings) { jump = JumpRequest(heading: $0) }
                     .frame(minWidth: 160, idealWidth: 220, maxWidth: 360, maxHeight: .infinity)
             }
-            if mode != .preview {
+            if shouldShowEditor {
                 editorPane
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
-            if mode != .editor {
+            if shouldShowPreview {
                 PreviewView(html: html, baseURL: directoryURL, jump: jump)
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -62,14 +62,34 @@ struct EditorView: View {
                 }
                 .help("Outline (⌥⌘S)")
             }
-            ToolbarItem(placement: .primaryAction) {
-                Picker("View", selection: $mode) {
-                    ForEach(ViewMode.allCases) { item in
-                        Image(systemName: item.symbol).tag(item)
+            ToolbarItemGroup(placement: .primaryAction) {
+                Picker("Editor Mode", selection: $editorMode) {
+                    ForEach(EditorMode.allCases) { item in
+                        Text(item.shortLabel).tag(item)
                     }
                 }
                 .pickerStyle(.segmented)
-                .help("Editor (⌘1) · Split (⌘2) · Preview (⌘3)")
+                .help("Editor Mode: Source (plain text) or WYSIWYG (live rich text)")
+
+                if editorMode == .plain {
+                    Picker("View", selection: $mode) {
+                        ForEach(ViewMode.allCases) { item in
+                            Image(systemName: item.symbol).tag(item)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .help("Editor (⌘1) · Split (⌘2) · Preview (⌘3)")
+                } else {
+                    Picker("View", selection: Binding(
+                        get: { mode == .preview ? ViewMode.preview : ViewMode.editor },
+                        set: { mode = $0 }
+                    )) {
+                        Image(systemName: "square.and.pencil").tag(ViewMode.editor)
+                        Image(systemName: "eye").tag(ViewMode.preview)
+                    }
+                    .pickerStyle(.segmented)
+                    .help("WYSIWYG Editor (⌘1) · HTML Preview (⌘3)")
+                }
             }
         }
         .focusedSceneValue(\.printSource, printSource)
@@ -77,6 +97,18 @@ struct EditorView: View {
     }
 
     private var directoryURL: URL? { fileURL?.deletingLastPathComponent() }
+
+    private var shouldShowEditor: Bool {
+        mode != .preview
+    }
+
+    private var shouldShowPreview: Bool {
+        if editorMode == .wysiwyg {
+            // In WYSIWYG mode, preview is only shown when explicitly in Preview mode. Never side-by-side split.
+            return mode == .preview
+        }
+        return mode != .editor
+    }
 
     private var printSource: PrintSource {
         PrintSource(
@@ -101,22 +133,12 @@ struct EditorView: View {
             HStack {
                 Text("\(wordCount) words")
                 Spacer()
-                Picker("Editor Mode", selection: $editorMode) {
-                    ForEach(EditorMode.allCases) { mode in
-                        Text(mode.shortLabel).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .controlSize(.mini)
-                .frame(width: 150)
-                .help("Switch between Source (plain text) and WYSIWYG (live rich text)")
-                Spacer()
                 Text("\(lineCount) lines")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 5)
             .background(.bar)
         }
     }
