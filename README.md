@@ -24,6 +24,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 - **Documents** — New / Open / Save / autosave / window restoration; owns `.md` `.markdown` `.mdown` `.mkd`
 - **View modes** — Editor (⌘1) · Split (⌘2) · Preview (⌘3)
 - **Local images** — paths relative to the document work (served through a `markpad://` URL scheme handler, no private API)
+- **Updates** — In-app update checking (MarkPad → Check for Updates… and Settings → Updates) using GitHub Releases as the single source of truth; shows release notes and direct download
 - KaTeX, Mermaid and highlight.js are bundled but loaded lazily — a document only pays for what it uses
 
 ## Install
@@ -81,7 +82,9 @@ Double-clicking `.md`, `.markdown`, `.mdown` and `.mkd` files now opens them in 
 
 ### Updating
 
-Download the new zip and replace `MarkPad.app` in `Applications`. Your settings (view mode, outline, print header/footer) live in macOS user defaults and survive the swap. Gatekeeper treats the new copy as a new download, so run step 2 again.
+MarkPad checks for new GitHub Releases automatically once a day (if enabled in **Settings → Updates**), or on demand via **MarkPad → Check for Updates…**. When a new release is found, it presents the release notes and direct download link.
+
+Alternatively, you can manually download the new zip from the [latest release](https://github.com/cycorld/markpad/releases/latest) and replace `MarkPad.app` in `Applications`. Your settings (view mode, outline, print header/footer, update preferences) live in macOS user defaults and survive the swap. Gatekeeper treats manually replaced copies as a new download, so run step 2 again.
 
 ### Uninstall
 
@@ -119,6 +122,7 @@ The first build generates the app icon (`Scripts/make-icon.swift`) and downloads
 | Export as PDF | ⌥⌘P |
 | Page Setup (paper size, orientation) | ⇧⌘P |
 | Print header / footer settings | ⌘, |
+| Check for Updates… | MarkPad menu |
 
 ### Headless PDF export
 
@@ -147,6 +151,12 @@ Sources/MarkPad/
   PrintController.swift         WebKit pagination → PDF → pages drawn with header/footer → print panel / file
   PrintOptions.swift            header / footer templates, page-number styles (UserDefaults)
   PrintSettingsView.swift       Settings → Print
+  SemanticVersion.swift         SemVer 2.0.0 parsing and precedence comparison
+  GitHubRelease.swift           GitHub Releases API models and asset lookup
+  UpdateChecker.swift           GitHub release SSOT update checker and timer
+  UpdateView.swift              Software update dialog UI
+  UpdateWindowController.swift  AppKit window controller for update dialog
+  UpdateSettingsView.swift      Settings → Updates tab
 Scripts/                        make-icon.swift, fetch-vendor.sh
 build.sh                        assembles the .app bundle
 ```

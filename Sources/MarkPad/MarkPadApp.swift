@@ -10,6 +10,11 @@ struct MarkPadApp: App {
             EditorView(document: file.$document, fileURL: file.fileURL)
         }
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") {
+                    UpdateChecker.shared.checkForUpdates(explicit: true)
+                }
+            }
             CommandGroup(after: .pasteboard) {
                 FindCommands()
             }
@@ -23,7 +28,16 @@ struct MarkPadApp: App {
         }
 
         Settings {
-            PrintSettingsView()
+            TabView {
+                PrintSettingsView()
+                    .tabItem {
+                        Label("Print", systemImage: "printer")
+                    }
+                UpdateSettingsView()
+                    .tabItem {
+                        Label("Updates", systemImage: "arrow.triangle.2.circlepath")
+                    }
+            }
         }
     }
 }

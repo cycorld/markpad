@@ -4,6 +4,12 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Added
+- In-app update checking using GitHub Releases as the Single Source of Truth (`MarkPad` → Check for Updates…).
+- Dedicated Software Update dialog displaying remote version, release notes, and download action.
+- Settings → Updates tab with version display, last checked timestamp, manual check button, and automatic daily update check toggle.
+- SemVer 2.0.0 parser and GitHub release asset resolver.
+
 ## [0.2.2] - 2026-09-22
 
 ### Added
