@@ -13,7 +13,7 @@ struct WysiwygTextView: View {
     private var configuration: MarkdownEditorConfiguration {
         var config = MarkdownEditorConfiguration.default
         config.textInsets = TextInsets(horizontal: 28, vertical: 20)
-        config.safeAreaInsets = SafeAreaInsets(top: 16, leading: 16, bottom: 24, trailing: 16)
+        config.safeAreaInsets = SafeAreaInsets(top: 16, leading: 16, trailing: 16, bottom: 24)
         return config
     }
 
