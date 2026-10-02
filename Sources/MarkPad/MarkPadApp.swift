@@ -52,16 +52,35 @@ private struct ViewCommands: View {
     @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
 
     var body: some View {
-        ForEach(Array(ViewMode.allCases.enumerated()), id: \.element) { index, item in
-            Button(item.label) { mode = item }
-                .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
+        Menu("Editor Mode") {
+            Button("Source (Plain Text)") {
+                editorMode = .plain
+            }
+            .keyboardShortcut("1", modifiers: [.command, .option])
+
+            Button("Live WYSIWYG") {
+                editorMode = .wysiwyg
+            }
+            .keyboardShortcut("2", modifiers: [.command, .option])
         }
         Divider()
-        Menu("Editor Mode") {
-            ForEach(EditorMode.allCases) { item in
-                Button(item.label) { editorMode = item }
-            }
+        Button("Editor") {
+            mode = .editor
         }
+        .keyboardShortcut("1", modifiers: .command)
+
+        Button("Split") {
+            editorMode = .plain
+            mode = .split
+        }
+        .keyboardShortcut("2", modifiers: .command)
+        .disabled(editorMode == .wysiwyg)
+
+        Button("Preview") {
+            mode = .preview
+        }
+        .keyboardShortcut("3", modifiers: .command)
+
         Divider()
         Toggle("Outline", isOn: $showOutline)
             .keyboardShortcut("s", modifiers: [.command, .option])

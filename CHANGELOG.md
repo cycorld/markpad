@@ -4,6 +4,14 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-02
+
+### Changed
+- Unified mode controls into the top-right toolbar: Editor Mode (Source vs WYSIWYG) and View Mode now live together in one clean, cohesive toolbar group.
+- Suppressed redundant split-screen preview in WYSIWYG mode — WYSIWYG is now a clean single-pane live writing surface.
+- Added generous inner padding and safe area insets to WYSIWYG mode (28px horizontal, 20px vertical) so text no longer touches the window edges.
+- Minimal status bar: removed cluttered footer picker, leaving clean word and line counts.
+
 ## [0.4.0] - 2026-10-02
 
 ### Added
@@ -63,7 +71,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/cycorld/markpad/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/cycorld/markpad/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/cycorld/markpad/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/cycorld/markpad/compare/v0.2.1...v0.2.2
