@@ -35,6 +35,12 @@ There is no Xcode project; the package is plain SwiftPM. `swift build` gives a b
 
 See the "Layout" section of the README. The renderer pipeline is `MarkdownRenderer` → `MathProtector.extract` → `HTMLRenderer` → `MathProtector.restore`; the preview's JavaScript (`PreviewTemplate.swift`) then lazy-loads KaTeX, Mermaid and highlight.js only for documents that need them.
 
+## Releases and Versioning
+
+1. **Update SSOT**: GitHub Releases (`https://api.github.com/repos/cycorld/markpad/releases/latest`) is the Single Source of Truth for software updates and versioning.
+2. **Approval Gate**: Version bumps in `Info.plist` and Git release tags (`v*`) **always require explicit approval from the repository owner** before tagging or publishing. Never create automated release tags without confirmation.
+3. **Update Notes & Changelog**: Every feature or fix must document its changes in `CHANGELOG.md` under `[Unreleased]` following Keep a Changelog standards, and update corresponding tables in `README.md` and `README.ko.md`.
+
 ## License
 
 By contributing you agree that your contributions are licensed under the MIT License (see `LICENSE`). `Sources/MarkPad/HTMLRenderer.swift` is derived from swift-markdown and keeps its Apache-2.0 header — preserve it when editing that file.

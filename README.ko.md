@@ -24,6 +24,7 @@ macOS용 작은 네이티브 마크다운 에디터. 왼쪽에서 편집하고 �
 - **문서** — 새로 만들기 / 열기 / 저장 / 자동 저장 / 창 복원. `.md` `.markdown` `.mdown` `.mkd` 연결
 - **보기 모드** — 편집기(⌘1) · 분할(⌘2) · 미리보기(⌘3)
 - **로컬 이미지** — 문서 기준 상대 경로 이미지 표시 (`markpad://` URL 스킴 핸들러, 비공개 API 없음)
+- **업데이트** — GitHub Releases를 단일 진실 공급원(SSOT)으로 삼는 앱 내 업데이트 확인(MarkPad → 업데이트 확인… 및 설정 → Updates). 릴리스 노트 확인 및 원클릭 다운로드 지원
 - KaTeX·Mermaid·highlight.js는 앱에 포함돼 있지만 필요할 때만 로드 — 문서가 쓰는 만큼만 비용을 냅니다
 
 ## 설치
@@ -81,7 +82,9 @@ xattr -d com.apple.quarantine /Applications/MarkPad.app
 
 ### 업데이트
 
-새 zip을 받아 `응용 프로그램`의 `MarkPad.app`을 교체합니다. 설정(보기 모드, 아웃라인, 인쇄 머리말/꼬리말)은 macOS user defaults에 저장되므로 그대로 유지됩니다. Gatekeeper는 새 복사본을 새 다운로드로 보기 때문에 2단계를 다시 합니다.
+MarkPad는 하루에 한 번 자동으로 백그라운드에서 최신 GitHub Releases를 확인하며(**설정 → Updates**에서 제어 가능), 메뉴의 **MarkPad → 업데이트 확인…**을 눌러 언제든 즉시 확인할 수 있습니다. 새 버전이 있으면 릴리스 노트와 함께 다운로드 창이 표시됩니다.
+
+또는 [최신 릴리스](https://github.com/cycorld/markpad/releases/latest)에서 새 zip을 직접 내려받아 `응용 프로그램`의 `MarkPad.app`을 교체하셔도 됩니다. 설정(보기 모드, 아웃라인, 인쇄 머리말/꼬리말, 자동 업데이트 여부)은 macOS user defaults에 저장되므로 그대로 유지됩니다. 수동 교체 시 Gatekeeper는 새 복사본을 새 다운로드로 보기 때문에 2단계를 다시 합니다.
 
 ### 제거
 
@@ -119,6 +122,7 @@ cd markpad
 | PDF로 내보내기 | ⌥⌘P |
 | 페이지 설정 (용지 크기, 방향) | ⇧⌘P |
 | 인쇄 머리말 / 꼬리말 설정 | ⌘, |
+| 업데이트 확인… | MarkPad 메뉴 |
 
 ### 헤드리스 PDF 내보내기
 
@@ -147,6 +151,12 @@ Sources/MarkPad/
   PrintController.swift         WebKit 페이지 분할 → PDF → 머리말/꼬리말 그린 페이지 → 인쇄 패널 / 파일
   PrintOptions.swift            머리말 / 꼬리말 템플릿, 페이지 번호 스타일 (UserDefaults)
   PrintSettingsView.swift       설정 → Print
+  SemanticVersion.swift         SemVer 2.0.0 파싱 및 우선순위 비교
+  GitHubRelease.swift           GitHub Releases API 모델 및 에셋 조회
+  UpdateChecker.swift           GitHub Releases SSOT 기반 업데이트 검사기 및 타이머
+  UpdateView.swift              소프트웨어 업데이트 대화상자 UI
+  UpdateWindowController.swift  업데이트 대화상자용 AppKit 윈도우 컨트롤러
+  UpdateSettingsView.swift      설정 → Updates 탭
 Scripts/                        make-icon.swift, fetch-vendor.sh
 build.sh                        .app 번들 조립
 ```
