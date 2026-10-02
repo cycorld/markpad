@@ -12,7 +12,7 @@ macOS용 작은 네이티브 마크다운 에디터. 왼쪽에서 편집하고 �
 
 ## 기능
 
-- **편집기** — `NSTextView`: 고정폭 글꼴, 스마트 따옴표·대시·자동 교정 끔, 실행 취소, 찾기·바꾸기(⌘F / ⌥⌘F)와 실시간 일치 강조
+- **편집기** — 듀얼 모드 지원: 순수 원본 텍스트를 빠르게 편집하는 **일반 텍스트(Source)** 모드와, `swift-markdown-engine`(TextKit 2) 기반으로 제목·굵게·기울임·목록·체크박스를 실시간 서식으로 보여주는 **라이브 위지윅(Live WYSIWYG)** 모드. 하단 상태 바나 보기 메뉴에서 즉시 전환 가능
 - **미리보기** — GitHub 스타일 `WKWebView`, 시스템 다크 모드 자동 추종, 타이핑 중에도 스크롤 위치 유지
 - **마크다운** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM 표, 취소선, 체크리스트)
 - **수식** — KaTeX로 `$인라인$`, `$$디스플레이$$` 렌더링 (Pandoc/Obsidian 규칙: 여는 `$` 뒤 공백 금지, `\$`는 글자 그대로, 코드 안은 건드리지 않음)
@@ -141,7 +141,10 @@ Sources/MarkPad/
   MarkdownDocument.swift        FileDocument (UTF-8 텍스트)
   EditorView.swift              아웃라인 / 편집기 / 미리보기 레이아웃, 툴바, 디바운스 렌더
   OutlineView.swift             제목 사이드바
-  MarkdownTextView.swift        NSTextView 래퍼
+  EditorMode.swift              일반 텍스트 vs 라이브 위지윅 모드 모델
+  MarkdownTextView.swift        NSTextView 래퍼 (일반 텍스트 모드)
+  WysiwygTextView.swift         MarkdownEngine 래퍼 (라이브 위지윅 모드)
+  EditorSettingsView.swift      설정 → Editor 탭
   PreviewView.swift             WKWebView 래퍼 (셸은 1회 로드, 본문은 JS로 교체)
   PreviewTemplate.swift         HTML 셸, CSS(화면 + 인쇄), KaTeX/Mermaid/highlight.js 지연 로더
   MarkdownRenderer.swift        마크다운 → HTML 파이프라인

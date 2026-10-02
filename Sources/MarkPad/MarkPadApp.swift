@@ -29,6 +29,10 @@ struct MarkPadApp: App {
 
         Settings {
             TabView {
+                EditorSettingsView()
+                    .tabItem {
+                        Label("Editor", systemImage: "doc.text")
+                    }
                 PrintSettingsView()
                     .tabItem {
                         Label("Print", systemImage: "printer")
@@ -45,11 +49,18 @@ struct MarkPadApp: App {
 private struct ViewCommands: View {
     @AppStorage(ViewMode.storageKey) private var mode: ViewMode = .split
     @AppStorage(EditorView.outlineStorageKey) private var showOutline = false
+    @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
 
     var body: some View {
         ForEach(Array(ViewMode.allCases.enumerated()), id: \.element) { index, item in
             Button(item.label) { mode = item }
                 .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
+        }
+        Divider()
+        Menu("Editor Mode") {
+            ForEach(EditorMode.allCases) { item in
+                Button(item.label) { editorMode = item }
+            }
         }
         Divider()
         Toggle("Outline", isOn: $showOutline)

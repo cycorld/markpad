@@ -32,6 +32,7 @@ struct EditorView: View {
 
     @AppStorage(ViewMode.storageKey) private var mode: ViewMode = .split
     @AppStorage(Self.outlineStorageKey) private var showOutline = false
+    @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
     @State private var html = ""
     @State private var headings: [HeadingInfo] = []
     @State private var jump: JumpRequest?
@@ -88,10 +89,27 @@ struct EditorView: View {
 
     private var editorPane: some View {
         VStack(spacing: 0) {
-            MarkdownTextView(text: $document.text, jump: jump)
+            if editorMode == .wysiwyg {
+                WysiwygTextView(
+                    text: $document.text,
+                    documentId: fileURL?.path ?? "untitled"
+                )
+            } else {
+                MarkdownTextView(text: $document.text, jump: jump)
+            }
             Divider()
             HStack {
                 Text("\(wordCount) words")
+                Spacer()
+                Picker("Editor Mode", selection: $editorMode) {
+                    ForEach(EditorMode.allCases) { mode in
+                        Text(mode.shortLabel).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .controlSize(.mini)
+                .frame(width: 150)
+                .help("Switch between Source (plain text) and WYSIWYG (live rich text)")
                 Spacer()
                 Text("\(lineCount) lines")
             }
