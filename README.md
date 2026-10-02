@@ -12,7 +12,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 
 ## Features
 
-- **Editor** — `NSTextView`: monospaced, smart quotes/dashes/autocorrect off, undo, find and replace (⌘F / ⌥⌘F) with incremental highlighting
+- **Editor** — Dual modes: **Plain Text (Source)** for raw monospaced editing, or **Live WYSIWYG** (powered by `swift-markdown-engine` on TextKit 2) for in-place live formatting of headings, bold/italic, lists and checkboxes. Switch instantly in the status bar or View menu
 - **Preview** — `WKWebView` with GitHub-flavoured styling, follows system dark mode, keeps scroll position while typing
 - **Markdown** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM tables, strikethrough, task lists)
 - **Math** — `$inline$` and `$$display$$` via KaTeX (Pandoc/Obsidian rules: no space after the opening `$`, `\$` is a literal dollar, code is never touched)
@@ -141,7 +141,10 @@ Sources/MarkPad/
   MarkdownDocument.swift        FileDocument (UTF-8 text)
   EditorView.swift              outline / editor / preview layout, toolbar, debounced render
   OutlineView.swift             heading sidebar
-  MarkdownTextView.swift        NSTextView wrapper
+  EditorMode.swift              Plain Text vs Live WYSIWYG mode model
+  MarkdownTextView.swift        NSTextView wrapper (Plain Text mode)
+  WysiwygTextView.swift         MarkdownEngine wrapper (Live WYSIWYG mode)
+  EditorSettingsView.swift      Settings → Editor tab
   PreviewView.swift             WKWebView wrapper (shell loads once, body swapped via JS)
   PreviewTemplate.swift         HTML shell, CSS (screen + print), lazy KaTeX/Mermaid/highlight.js loader
   MarkdownRenderer.swift        markdown → HTML pipeline

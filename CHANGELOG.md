@@ -4,6 +4,12 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Added
+- Dual Editor Modes: choose between **Plain Text (Source)** and **Live WYSIWYG**.
+- Live WYSIWYG editing powered by `swift-markdown-engine` (TextKit 2 AppKit native live markdown styling: headings, bold/italic, lists, checkboxes, and inline formatting).
+- Quick Editor Mode switcher in the bottom status bar and `View → Editor Mode` menu.
+- `Settings → Editor` tab for configuring the default editing experience.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added
