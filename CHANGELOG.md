@@ -4,6 +4,13 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-02
+
+### Changed
+- Per-Window State Isolation: Editor Mode (Source vs WYSIWYG), View Mode (Editor vs Split vs Preview), and Outline visibility are now isolated per document window. Changing modes in one window no longer affects other open windows.
+- Menu Bar and Keyboard Shortcuts (`⌘1`, `⌘2`, `⌘3`, `⌥⌘1`, `⌥⌘2`, `⌥⌘S`) now target only the currently focused/active window via `@FocusedBinding`.
+- Settings → Editor now configures the global defaults for newly created document windows.
+
 ## [0.4.1] - 2026-10-02
 
 ### Changed
@@ -71,7 +78,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/cycorld/markpad/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/cycorld/markpad/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/cycorld/markpad/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/cycorld/markpad/compare/v0.2.2...v0.3.0

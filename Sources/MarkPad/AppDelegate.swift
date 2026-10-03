@@ -9,6 +9,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.register(defaults: PrintOptions.defaults)
         UserDefaults.standard.register(defaults: UpdateChecker.defaults)
+        UserDefaults.standard.register(defaults: [
+            EditorMode.defaultModeKey: EditorMode.wysiwyg.rawValue,
+            ViewMode.defaultViewModeKey: ViewMode.split.rawValue,
+            EditorView.outlineStorageKey: false,
+        ])
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {

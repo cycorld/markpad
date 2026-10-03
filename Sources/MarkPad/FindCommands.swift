@@ -3,35 +3,40 @@ import SwiftUI
 
 /// Edit → Find submenu. Drives the editor's built-in `NSTextFinder` bar (find, replace, next/previous).
 struct FindCommands: View {
+    @FocusedBinding(\.viewModeBinding) private var mode: ViewMode?
+
     var body: some View {
         Menu("Find") {
-            Button("Find…") { Self.perform(.showFindInterface) }
+            Button("Find…") { trigger(.showFindInterface) }
                 .keyboardShortcut("f", modifiers: .command)
-            Button("Find and Replace…") { Self.perform(.showReplaceInterface) }
+            Button("Find and Replace…") { trigger(.showReplaceInterface) }
                 .keyboardShortcut("f", modifiers: [.command, .option])
-            Button("Find Next") { Self.perform(.nextMatch) }
+            Button("Find Next") { Self.performAction(.nextMatch) }
                 .keyboardShortcut("g", modifiers: .command)
-            Button("Find Previous") { Self.perform(.previousMatch) }
+            Button("Find Previous") { Self.performAction(.previousMatch) }
                 .keyboardShortcut("g", modifiers: [.command, .shift])
             Divider()
-            Button("Use Selection for Find") { Self.perform(.setSearchString) }
+            Button("Use Selection for Find") { Self.performAction(.setSearchString) }
                 .keyboardShortcut("e", modifiers: .command)
-            Button("Hide Find Bar") { Self.perform(.hideFindInterface) }
+            Button("Hide Find Bar") { Self.performAction(.hideFindInterface) }
                 .keyboardShortcut("f", modifiers: [.command, .shift])
         }
     }
 
-    /// Sends the text-finder action to the editor of the key window. If the editor isn't visible
-    /// (preview-only mode) the window switches to split view first.
-    static func perform(_ action: NSTextFinder.Action, retrying: Bool = false) {
+    private func trigger(_ action: NSTextFinder.Action) {
+        if mode == .preview {
+            mode = .editor
+        }
+        DispatchQueue.main.async {
+            Self.performAction(action)
+        }
+    }
+
+    /// Sends the text-finder action to the editor of the key window.
+    static func performAction(_ action: NSTextFinder.Action) {
         guard let window = NSApp.keyWindow else { return }
         if !(window.firstResponder is NSTextView) {
-            guard let textView = firstTextView(in: window.contentView) else {
-                guard !retrying else { return }
-                UserDefaults.standard.set(ViewMode.split.rawValue, forKey: ViewMode.storageKey)
-                DispatchQueue.main.async { perform(action, retrying: true) }
-                return
-            }
+            guard let textView = firstTextView(in: window.contentView) else { return }
             window.makeFirstResponder(textView)
         }
         let item = NSMenuItem()

@@ -1,13 +1,14 @@
 import SwiftUI
 
-/// Settings → Editor: editing mode (Plain Text vs Live WYSIWYG) and editor behaviors.
+/// Settings → Editor: default editing mode for new windows and editor behavior preferences.
 struct EditorSettingsView: View {
-    @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
+    @AppStorage(EditorMode.defaultModeKey) private var defaultEditorMode: EditorMode = .wysiwyg
+    @AppStorage(ViewMode.defaultViewModeKey) private var defaultViewMode: ViewMode = .split
 
     var body: some View {
         Form {
-            Section("Editing Experience") {
-                Picker("Editor Mode", selection: $editorMode) {
+            Section("New Window Defaults") {
+                Picker("Default Editor Mode", selection: $defaultEditorMode) {
                     ForEach(EditorMode.allCases) { mode in
                         Label(mode.label, systemImage: mode.symbol).tag(mode)
                     }
@@ -18,6 +19,13 @@ struct EditorSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding(.top, 4)
+
+                Picker("Default View Mode", selection: $defaultViewMode) {
+                    ForEach(ViewMode.allCases) { view in
+                        Text(view.label).tag(view)
+                    }
+                }
+                .padding(.top, 4)
             }
 
             Section("Mode Differences") {
@@ -61,7 +69,7 @@ struct EditorSettingsView: View {
     }
 
     private var modeDescription: String {
-        switch editorMode {
+        switch defaultEditorMode {
         case .plain:
             return "Displays markdown as plain monospace text. Fast and simple."
         case .wysiwyg:

@@ -4,6 +4,7 @@ enum ViewMode: String, CaseIterable, Identifiable {
     case editor, split, preview
 
     static let storageKey = "viewMode"
+    static let defaultViewModeKey = "defaultViewMode"
 
     var id: String { rawValue }
 
@@ -24,18 +25,63 @@ enum ViewMode: String, CaseIterable, Identifiable {
     }
 }
 
+private struct FocusedViewModeKey: FocusedValueKey {
+    typealias Value = Binding<ViewMode>
+}
+
+private struct FocusedEditorModeKey: FocusedValueKey {
+    typealias Value = Binding<EditorMode>
+}
+
+private struct FocusedOutlineKey: FocusedValueKey {
+    typealias Value = Binding<Bool>
+}
+
+extension FocusedValues {
+    var viewModeBinding: Binding<ViewMode>? {
+        get { self[FocusedViewModeKey.self] }
+        set { self[FocusedViewModeKey.self] = newValue }
+    }
+
+    var editorModeBinding: Binding<EditorMode>? {
+        get { self[FocusedEditorModeKey.self] }
+        set { self[FocusedEditorModeKey.self] = newValue }
+    }
+
+    var outlineBinding: Binding<Bool>? {
+        get { self[FocusedOutlineKey.self] }
+        set { self[FocusedOutlineKey.self] = newValue }
+    }
+}
+
 struct EditorView: View {
     static let outlineStorageKey = "showOutline"
 
     @Binding var document: MarkdownDocument
     let fileURL: URL?
 
-    @AppStorage(ViewMode.storageKey) private var mode: ViewMode = .split
-    @AppStorage(Self.outlineStorageKey) private var showOutline = false
-    @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
+    @State private var mode: ViewMode
+    @State private var showOutline: Bool
+    @State private var editorMode: EditorMode
     @State private var html = ""
     @State private var headings: [HeadingInfo] = []
     @State private var jump: JumpRequest?
+
+    init(document: Binding<MarkdownDocument>, fileURL: URL?) {
+        self._document = document
+        self.fileURL = fileURL
+
+        let defaultEditor = UserDefaults.standard.string(forKey: EditorMode.defaultModeKey)
+            .flatMap(EditorMode.init) ?? .wysiwyg
+        self._editorMode = State(initialValue: defaultEditor)
+
+        let defaultView = UserDefaults.standard.string(forKey: ViewMode.defaultViewModeKey)
+            .flatMap(ViewMode.init) ?? (defaultEditor == .wysiwyg ? .editor : .split)
+        self._mode = State(initialValue: defaultView)
+
+        let defaultOutline = UserDefaults.standard.bool(forKey: Self.outlineStorageKey)
+        self._showOutline = State(initialValue: defaultOutline)
+    }
 
     var body: some View {
         HSplitView {
@@ -93,6 +139,9 @@ struct EditorView: View {
             }
         }
         .focusedSceneValue(\.printSource, printSource)
+        .focusedSceneValue(\.viewModeBinding, $mode)
+        .focusedSceneValue(\.editorModeBinding, $editorMode)
+        .focusedSceneValue(\.outlineBinding, $showOutline)
         .task(id: document.text) { await render(document.text) }
     }
 
