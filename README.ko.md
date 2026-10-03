@@ -12,7 +12,7 @@ macOS용 작은 네이티브 마크다운 에디터. 왼쪽에서 편집하고 �
 
 ## 기능
 
-- **편집기** — 듀얼 모드 지원: 순수 원본 텍스트를 빠르게 편집하는 **일반 텍스트(Source)** 모드와, `swift-markdown-engine`(TextKit 2) 기반으로 제목·굵게·기울임·목록·체크박스를 실시간 서식으로 보여주는 **라이브 위지윅(Live WYSIWYG)** 모드. 하단 상태 바나 보기 메뉴에서 즉시 전환 가능
+- **편집기** — 듀얼 모드 지원: 순수 원본 텍스트를 빠르게 편집하는 **일반 텍스트(Source)** 모드와, `swift-markdown-engine`(TextKit 2) 기반으로 제목·굵게·기울임·목록·체크박스 및 코드 블록 구문 강조(Syntax Highlighting, `MarkdownEngineCodeBlocks`)를 실시간 서식으로 보여주는 **라이브 위지윅(Live WYSIWYG)** 모드. 하단 상태 바나 보기 메뉴에서 즉시 전환 가능
 - **미리보기** — GitHub 스타일 `WKWebView`, 시스템 다크 모드 자동 추종, 타이핑 중에도 스크롤 위치 유지
 - **마크다운** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM 표, 취소선, 체크리스트)
 - **수식** — KaTeX로 `$인라인$`, `$$디스플레이$$` 렌더링 (Pandoc/Obsidian 규칙: 여는 `$` 뒤 공백 금지, `\$`는 글자 그대로, 코드 안은 건드리지 않음)

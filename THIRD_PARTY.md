@@ -4,6 +4,7 @@
 |---|---|---|---|
 | [swift-markdown](https://github.com/swiftlang/swift-markdown) | 0.8.0 | Apache-2.0 with Runtime Library Exception | Markdown parser (SwiftPM dependency). `Sources/MarkPad/HTMLRenderer.swift` is derived from its `HTMLFormatter`. |
 | [swift-markdown-engine](https://github.com/nodes-app/swift-markdown-engine) | 0.13.0 | Apache-2.0 | Native TextKit 2 live WYSIWYG markdown editor engine (SwiftPM dependency). |
+| [HighlighterSwift](https://github.com/smittytone/HighlighterSwift) | 3.1.0+ | MIT | Syntax highlighter for live WYSIWYG code blocks via `MarkdownEngineCodeBlocks` (transitive SwiftPM dependency). |
 | [Sparkle](https://sparkle-project.org) | 2.6.4 | MIT | Software update framework for macOS with Ed25519 signing and in-place relaunch (SwiftPM dependency). |
 | [KaTeX](https://katex.org) | 0.18.7 | MIT | Math rendering. Downloaded by `Scripts/fetch-vendor.sh`, bundled into the app. |
 | [Mermaid](https://mermaid.js.org) | 12.0.0 | MIT | Diagram rendering. Downloaded by `Scripts/fetch-vendor.sh`, bundled into the app. |
