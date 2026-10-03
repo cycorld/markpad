@@ -12,7 +12,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 
 ## Features
 
-- **Editor** — Dual modes: **Plain Text (Source)** for raw monospaced editing, or **Live WYSIWYG** (powered by `swift-markdown-engine` on TextKit 2) for in-place live formatting of headings, bold/italic, lists and checkboxes. Switch instantly in the status bar or View menu
+- **Editor** — Dual modes: **Plain Text (Source)** for raw monospaced editing, or **Live WYSIWYG** (powered by `swift-markdown-engine` on TextKit 2) for in-place live formatting of headings, bold/italic, lists, task checkboxes, and fenced code blocks with live syntax highlighting (`MarkdownEngineCodeBlocks` + `HighlighterSwift`). Switch instantly in the status bar or View menu
 - **Preview** — `WKWebView` with GitHub-flavoured styling, follows system dark mode, keeps scroll position while typing
 - **Markdown** — Apple [swift-markdown](https://github.com/swiftlang/swift-markdown) (CommonMark + GFM tables, strikethrough, task lists)
 - **Math** — `$inline$` and `$$display$$` via KaTeX (Pandoc/Obsidian rules: no space after the opening `$`, `\$` is a literal dollar, code is never touched)

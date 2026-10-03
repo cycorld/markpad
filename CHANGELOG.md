@@ -5,6 +5,10 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 ## [Unreleased]
 
 ### Added
+- **Syntax Highlighting in Live WYSIWYG Mode**:
+  - Integrated `MarkdownEngineCodeBlocks` and `HighlighterSwiftBridge` for live syntax highlighting within fenced code blocks directly in the WYSIWYG editing surface.
+  - Automatically switches between `github` (light) and `github-dark` (dark) themes matching system appearance and MarkPad's HTML preview.
+  - Monospace font and padded code block container styling integrated into TextKit 2 layout.
 - **Click-to-Edit & Double-Click Transition in Preview Mode**:
   - In Preview / Read-Only mode (`mode == .preview`), single-clicking on the document prompts a confirmation alert ("문서를 수정하시겠습니까?"), transitioning to edit mode upon confirmation.
   - Double-clicking instantly transitions directly into edit mode without an alert popup.
