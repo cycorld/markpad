@@ -4,6 +4,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-03
+
 ### Added
 - **Syntax Highlighting in Live WYSIWYG Mode**:
   - Integrated `MarkdownEngineCodeBlocks` and `HighlighterSwiftBridge` for live syntax highlighting within fenced code blocks directly in the WYSIWYG editing surface.
@@ -14,6 +16,10 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
   - Double-clicking instantly transitions directly into edit mode without an alert popup.
   - Hyperlinks, task checkboxes, and drag text selections are preserved and excluded from triggering edit transitions.
 - **Dedicated ViewMode Model**: Extracted `ViewMode` into `Sources/MarkPad/ViewMode.swift` with full unit test coverage in `ViewModeTests.swift`.
+- Integrated Sparkle 2 auto-updater framework for true 1-click background download, atomic in-place app replacement, and automatic relaunch.
+- Cryptographically signed releases with Ed25519 (`SUPublicEDKey`).
+- Appcast feed (`appcast.xml`) for secure update discovery.
+- Native Sparkle update preferences in `Settings → Updates` (automatic check & automatic install toggles).
 
 ### Changed
 - **Unified 3-Switch Window Layout Metaphor**:
@@ -23,14 +29,6 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
     - Preview only: `rectangle.trailinghalf.filled`
   - Applied the unified 3-switch slider consistently across both Plain Text (Source) and Live WYSIWYG modes.
   - Supported Split view in WYSIWYG mode for cross-referencing live rendered HTML, Mermaid diagrams, and KaTeX math alongside rich text.
-
-## [0.5.0] - 2026-10-03
-
-### Added
-- Integrated Sparkle 2 auto-updater framework for true 1-click background download, atomic in-place app replacement, and automatic relaunch.
-- Cryptographically signed releases with Ed25519 (`SUPublicEDKey`).
-- Appcast feed (`appcast.xml`) for secure update discovery.
-- Native Sparkle update preferences in `Settings → Updates` (automatic check & automatic install toggles).
 
 ### Removed
 - Legacy custom update checker and manual download redirect sheets.
