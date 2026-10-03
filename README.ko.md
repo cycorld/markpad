@@ -28,47 +28,67 @@ macOS용 작은 네이티브 마크다운 에디터. 왼쪽에서 편집하고 �
 - KaTeX·Mermaid·highlight.js는 앱에 포함돼 있지만 필요할 때만 로드 — 문서가 쓰는 만큼만 비용을 냅니다
 
 ## 설치
-
+ 
 ### 요구 사항
-
+ 
 - macOS 14 Sonoma 이상
 - Apple silicon 또는 Intel (릴리스 빌드는 유니버설 바이너리)
 - 다른 의존성 없음 — 실행 중 네트워크에서 받아오는 것 없음
-
-### 1. 다운로드
-
-1. [최신 릴리스](https://github.com/cycorld/markpad/releases/latest)에서 `MarkPad-vX.Y.Z.zip`을 받습니다.
-2. zip을 더블클릭해 `MarkPad.app`을 꺼냅니다.
-3. `MarkPad.app`을 `응용 프로그램` 폴더로 끌어다 놓습니다.
-
-선택 — 다운로드 검증. 같은 릴리스의 `SHA256SUMS.txt`를 zip과 같은 폴더에 두고:
-
-```bash
-shasum -a 256 -c SHA256SUMS.txt
-```
-
-### 2. 첫 실행
-
-MarkPad는 ad-hoc 서명만 되어 있고 공증(notarization)은 받지 않았습니다(유료 Apple Developer 계정이 없음). 그래서 첫 실행 때 macOS가 *"MarkPad"을(를) 열 수 없습니다. Apple에서 확인할 수 없습니다* 또는 *… 열리지 않았습니다* 라며 막습니다. 아래 방법 중 하나로 한 번만 허용하면 됩니다.
-
-**macOS 15 Sequoia 이상**
-
-1. `MarkPad.app`을 한 번 더블클릭하고 경고를 닫습니다.
-2. **시스템 설정 → 개인정보 보호 및 보안**을 열고 아래 **보안** 항목까지 내립니다.
-3. *Mac을 보호하기 위해 "MarkPad"이(가) 차단되었습니다* 옆의 **그래도 열기**를 누르고, 한 번 더 **그래도 열기**로 확인합니다(암호나 Touch ID를 물을 수 있음).
-
-**macOS 14 Sonoma**
-
-1. `MarkPad.app`을 Control-클릭(오른쪽 클릭) → **열기**.
-2. 대화상자에서 **열기**를 누릅니다.
-
-**터미널 (모든 버전)**
-
-```bash
-xattr -d com.apple.quarantine /Applications/MarkPad.app
-```
-
-다운로드한 파일에 macOS가 붙이는 격리(quarantine) 플래그를 지우는 명령입니다. 이후에는 다른 앱과 똑같이 열립니다. 새 버전을 설치하면 이 단계를 다시 해야 합니다.
+ 
+-### 1. 다운로드
++### 방법 A: Homebrew Cask (권장 — 격리 플래그 없음)
++
++```bash
++brew install --cask cycorld/tap/markpad
++```
++
++Homebrew로 설치한 앱은 macOS가 격리(quarantine) 플래그를 붙이지 않아 Gatekeeper 경고 없이 즉시 실행됩니다.
++
++### 방법 B: 터미널 1줄 설치 스크립트 (격리 플래그 없음)
++
++```bash
++curl -fsSL https://raw.githubusercontent.com/cycorld/markpad/main/install.sh | bash
++```
++
++최신 릴리스를 자동 다운로드하고, SHA256 체크섬 검증 및 격리 플래그 해제 후 `/Applications/MarkPad.app`에 안전하게 설치합니다.
++
++### 방법 C: 직접 다운로드 (.zip)
+ 
+ 1. [최신 릴리스](https://github.com/cycorld/markpad/releases/latest)에서 `MarkPad-vX.Y.Z.zip`을 받습니다.
+ 2. zip을 더블클릭해 `MarkPad.app`을 꺼냅니다.
+ 3. `MarkPad.app`을 `응용 프로그램` 폴더로 끌어다 놓습니다.
+ 
+-선택 — 다운로드 검증. 같은 릴리스의 `SHA256SUMS.txt`를 zip과 같은 폴더에 두고:
++#### 첫 실행 (직접 다운로드 시)
+ 
+-```bash
+-shasum -a 256 -c SHA256SUMS.txt
+-```
+-
+-### 2. 첫 실행
+-
+-MarkPad는 ad-hoc 서명만 되어 있고 공증(notarization)은 받지 않았습니다(유료 Apple Developer 계정이 없음). 그래서 첫 실행 때 macOS가 *"MarkPad"을(를) 열 수 없습니다. Apple에서 확인할 수 없습니다* 또는 *… 열리지 않았습니다* 라며 막습니다. 아래 방법 중 하나로 한 번만 허용하면 됩니다.
+-
+-**macOS 15 Sequoia 이상**
+-
+-1. `MarkPad.app`을 한 번 더블클릭하고 경고를 닫습니다.
+-2. **시스템 설정 → 개인정보 보호 및 보안**을 열고 아래 **보안** 항목까지 내립니다.
+-3. *Mac을 보호하기 위해 "MarkPad"이(가) 차단되었습니다* 옆의 **그래도 열기**를 누르고, 한 번 더 **그래도 열기**로 확인합니다(암호나 Touch ID를 물을 수 있음).
+-
+-**macOS 14 Sonoma**
+-
+-1. `MarkPad.app`을 Control-클릭(오른쪽 클릭) → **열기**.
+-2. 대화상자에서 **열기**를 누릅니다.
+-
+-**터미널 (모든 버전)**
++브라우저를 통해 직접 다운로드하면 macOS가 `com.apple.quarantine` 속성을 부여하므로 아래 명령으로 격리를 해제합니다:
+ 
+ ```bash
+ xattr -d com.apple.quarantine /Applications/MarkPad.app
+ ```
+ 
+-다운로드한 파일에 macOS가 붙이는 격리(quarantine) 플래그를 지우는 명령입니다. 이후에는 다른 앱과 똑같이 열립니다. 새 버전을 설치하면 이 단계를 다시 해야 합니다.
++또는 `MarkPad.app` Control-클릭(오른쪽 클릭) → **열기** 또는 **시스템 설정 → 개인정보 보호 및 보안**에서 허용합니다.
 
 ### 3. `.md` 파일을 MarkPad로 열기
 

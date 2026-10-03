@@ -32,43 +32,40 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 ### Requirements
 
 - macOS 14 Sonoma or later
-- Apple silicon or Intel (the release build is a universal binary)
+- Apple silicon or Intel (universal binary)
 - No other dependencies — nothing is fetched at runtime
 
-### 1. Download
+### Option A: Homebrew Cask (Recommended — No Quarantine)
+
+```bash
+brew install --cask cycorld/tap/markpad
+```
+
+Apps installed via Homebrew do not receive the quarantine flag and open immediately without Gatekeeper warnings.
+
+### Option B: One-Line Terminal Installer (No Quarantine)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cycorld/markpad/main/install.sh | bash
+```
+
+Automatically downloads the latest verified release, verifies SHA256 checksums, clears quarantine, and installs into `/Applications/MarkPad.app`.
+
+### Option C: Direct Download (.zip)
 
 1. Open the [latest release](https://github.com/cycorld/markpad/releases/latest) and download `MarkPad-vX.Y.Z.zip`.
 2. Double-click the zip to unpack `MarkPad.app`.
 3. Drag `MarkPad.app` into your `Applications` folder.
 
-Optional — verify the download. Put `SHA256SUMS.txt` from the same release next to the zip and run:
+#### First launch (Direct Download only)
 
-```bash
-shasum -a 256 -c SHA256SUMS.txt
-```
-
-### 2. First launch
-
-MarkPad is ad-hoc signed and not notarized (there is no paid Apple Developer account behind it), so macOS blocks the very first launch with *"MarkPad" cannot be opened because Apple cannot verify it* or *… was not opened*. Allow it once, with whichever of these you prefer:
-
-**macOS 15 Sequoia or later**
-
-1. Double-click `MarkPad.app` once and dismiss the warning.
-2. Open **System Settings → Privacy & Security**, scroll down to **Security**.
-3. Next to *"MarkPad" was blocked to protect your Mac*, click **Open Anyway**, then confirm with **Open Anyway** again (you may be asked for your password or Touch ID).
-
-**macOS 14 Sonoma**
-
-1. Control-click (right-click) `MarkPad.app` → **Open**.
-2. Click **Open** in the dialog.
-
-**Terminal (any version)**
+Because direct browser downloads attach the `com.apple.quarantine` attribute, macOS blocks the first launch of ad-hoc signed apps. Clear it with:
 
 ```bash
 xattr -d com.apple.quarantine /Applications/MarkPad.app
 ```
 
-This removes the quarantine flag macOS puts on downloaded files. After that MarkPad opens like any other app. You will need to repeat this step after installing a new version.
+Or right-click (Control-click) `MarkPad.app` → **Open**, or allow in **System Settings → Privacy & Security**.
 
 ### 3. Open `.md` files with MarkPad
 
