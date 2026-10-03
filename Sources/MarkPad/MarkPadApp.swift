@@ -47,9 +47,9 @@ struct MarkPadApp: App {
 }
 
 private struct ViewCommands: View {
-    @AppStorage(ViewMode.storageKey) private var mode: ViewMode = .split
-    @AppStorage(EditorView.outlineStorageKey) private var showOutline = false
-    @AppStorage(EditorMode.storageKey) private var editorMode: EditorMode = .wysiwyg
+    @FocusedBinding(\.viewModeBinding) private var mode: ViewMode?
+    @FocusedBinding(\.editorModeBinding) private var editorMode: EditorMode?
+    @FocusedBinding(\.outlineBinding) private var showOutline: Bool?
 
     var body: some View {
         Menu("Editor Mode") {
@@ -60,30 +60,42 @@ private struct ViewCommands: View {
 
             Button("Live WYSIWYG") {
                 editorMode = .wysiwyg
+                if mode == .split { mode = .editor }
             }
             .keyboardShortcut("2", modifiers: [.command, .option])
         }
+        .disabled(editorMode == nil)
+
         Divider()
+
         Button("Editor") {
             mode = .editor
         }
         .keyboardShortcut("1", modifiers: .command)
+        .disabled(mode == nil)
 
         Button("Split") {
             editorMode = .plain
             mode = .split
         }
         .keyboardShortcut("2", modifiers: .command)
-        .disabled(editorMode == .wysiwyg)
+        .disabled(mode == nil || editorMode == .wysiwyg)
 
         Button("Preview") {
             mode = .preview
         }
         .keyboardShortcut("3", modifiers: .command)
+        .disabled(mode == nil)
 
         Divider()
-        Toggle("Outline", isOn: $showOutline)
-            .keyboardShortcut("s", modifiers: [.command, .option])
+
+        Button(showOutline == true ? "Hide Outline" : "Show Outline") {
+            if let current = showOutline {
+                showOutline = !current
+            }
+        }
+        .keyboardShortcut("s", modifiers: [.command, .option])
+        .disabled(showOutline == nil)
     }
 }
 

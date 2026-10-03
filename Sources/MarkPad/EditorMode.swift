@@ -6,6 +6,7 @@ public enum EditorMode: String, CaseIterable, Identifiable, Sendable {
     case wysiwyg = "wysiwyg"
 
     public static let storageKey = "editorMode"
+    public static let defaultModeKey = "defaultEditorMode"
 
     public var id: String { rawValue }
 
