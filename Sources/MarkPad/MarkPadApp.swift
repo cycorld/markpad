@@ -64,7 +64,6 @@ private struct ViewCommands: View {
 
             Button("Live WYSIWYG") {
                 editorMode = .wysiwyg
-                if mode == .split { mode = .editor }
             }
             .keyboardShortcut("2", modifiers: [.command, .option])
         }
@@ -79,11 +78,10 @@ private struct ViewCommands: View {
         .disabled(mode == nil)
 
         Button("Split") {
-            editorMode = .plain
             mode = .split
         }
         .keyboardShortcut("2", modifiers: .command)
-        .disabled(mode == nil || editorMode == .wysiwyg)
+        .disabled(mode == nil)
 
         Button("Preview") {
             mode = .preview

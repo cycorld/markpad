@@ -6,12 +6,15 @@ struct PreviewView: NSViewRepresentable {
     let html: String
     let baseURL: URL?
     var jump: JumpRequest? = nil
+    var isPreviewOnly: Bool = false
+    var onEditRequest: ((_ immediate: Bool) -> Void)? = nil
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     func makeNSView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(LocalFileSchemeHandler(), forURLScheme: LocalFileSchemeHandler.scheme)
+        config.userContentController.add(context.coordinator, name: "markpadEdit")
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = context.coordinator
         web.underPageBackgroundColor = .textBackgroundColor
@@ -20,8 +23,13 @@ struct PreviewView: NSViewRepresentable {
     }
 
     func updateNSView(_ web: WKWebView, context: Context) {
+        context.coordinator.parent = self
         context.coordinator.update(html: html, baseURL: pageBaseURL, in: web)
         if let jump { context.coordinator.jump(to: jump, in: web) }
+    }
+
+    static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "markpadEdit")
     }
 
     /// `markpad:///abs/dir/` so relative images resolve through `LocalFileSchemeHandler`. Untitled documents
@@ -37,12 +45,18 @@ struct PreviewView: NSViewRepresentable {
         return PreviewTemplate.page(vendorURL: vendor?.absoluteString ?? "")
     }()
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        var parent: PreviewView
         private var shellLoaded = false
         private var currentBase: URL?
         private var lastHTML: String?
         private var pending: String?
         private var lastJump: UUID?
+
+        init(_ parent: PreviewView) {
+            self.parent = parent
+            super.init()
+        }
 
         func jump(to request: JumpRequest, in web: WKWebView) {
             guard request.token != lastJump, shellLoaded else { return }
@@ -76,6 +90,25 @@ struct PreviewView: NSViewRepresentable {
                   let json = String(data: data, encoding: .utf8)
             else { return }
             web.evaluateJavaScript("window.__set(\(json))")
+        }
+
+        // MARK: WKScriptMessageHandler
+
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard message.name == "markpadEdit" else { return }
+            guard parent.isPreviewOnly else { return }
+            guard let body = message.body as? [String: Any],
+                  let action = body["action"] as? String
+            else { return }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                if action == "doubleClick" {
+                    self.parent.onEditRequest?(true)
+                } else if action == "singleClick" {
+                    self.parent.onEditRequest?(false)
+                }
+            }
         }
 
         // MARK: WKNavigationDelegate

@@ -22,7 +22,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 - **Outline sidebar** — ⌥⌘S lists the headings; click one to jump both the editor and the preview
 - **Print & PDF** — ⌘P prints the rendered preview through the normal print panel; ⌥⌘P exports a PDF. Header and footer are configurable in Settings (⌘,) with `{title}` `{file}` `{page}` `{pages}` `{date}` `{time}` tokens and four page-number styles. Paper size and orientation come from Page Setup (⇧⌘P)
 - **Documents** — New / Open / Save / autosave / window restoration; owns `.md` `.markdown` `.mdown` `.mkd`
-- **View modes** — Editor (⌘1) · Split (⌘2) · Preview (⌘3)
+- **View modes** — Unified 3-switch layout slider: Editor (⌘1) · Split (⌘2) · Preview (⌘3). In Preview mode, click to confirm editing or double-click to immediately jump into edit mode.
 - **Local images** — paths relative to the document work (served through a `markpad://` URL scheme handler, no private API)
 - **Updates** — In-app auto-update powered by Sparkle 2 with Ed25519 cryptographic signatures; supports background checks, 1-click update, and seamless automatic relaunch (MarkPad → Check for Updates… and Settings → Updates)
 - KaTeX, Mermaid and highlight.js are bundled but loaded lazily — a document only pays for what it uses
@@ -142,6 +142,7 @@ Sources/MarkPad/
   EditorView.swift              outline / editor / preview layout, toolbar, debounced render
   OutlineView.swift             heading sidebar
   EditorMode.swift              Plain Text vs Live WYSIWYG mode model
+  ViewMode.swift                Editor vs Split vs Preview layout model
   MarkdownTextView.swift        NSTextView wrapper (Plain Text mode)
   WysiwygTextView.swift         MarkdownEngine wrapper (Live WYSIWYG mode)
   EditorSettingsView.swift      Settings → Editor tab

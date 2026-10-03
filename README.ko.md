@@ -22,7 +22,7 @@ macOS용 작은 네이티브 마크다운 에디터. 왼쪽에서 편집하고 �
 - **아웃라인 사이드바** — ⌥⌘S로 제목 목록 표시. 클릭하면 편집기와 미리보기가 함께 이동
 - **인쇄 & PDF** — ⌘P로 렌더링된 미리보기를 일반 인쇄 패널로 인쇄, ⌥⌘P로 PDF 내보내기. 머리말·꼬리말은 설정(⌘,)에서 `{title}` `{file}` `{page}` `{pages}` `{date}` `{time}` 토큰과 4가지 페이지 번호 스타일로 구성. 용지 크기·방향은 페이지 설정(⇧⌘P)
 - **문서** — 새로 만들기 / 열기 / 저장 / 자동 저장 / 창 복원. `.md` `.markdown` `.mdown` `.mkd` 연결
-- **보기 모드** — 편집기(⌘1) · 분할(⌘2) · 미리보기(⌘3)
+- **보기 모드** — 통합 3단 레이아웃 슬라이더: 편집기만(⌘1) · 분할(⌘2) · 보기만(⌘3). 보기 모드에서 클릭 시 수정 확인 팝업, 더블클릭 시 즉시 편집 모드로 전환
 - **로컬 이미지** — 문서 기준 상대 경로 이미지 표시 (`markpad://` URL 스킴 핸들러, 비공개 API 없음)
 - **업데이트** — Sparkle 2 프레임워크와 Ed25519 암호학적 전자서명 기반 인앱 자동 업데이트(MarkPad → 업데이트 확인… 및 설정 → Updates). 백그라운드 자동 검사, 1-클릭 인플레이스 무중단 교체 및 자동 재실행 지원
 - KaTeX·Mermaid·highlight.js는 앱에 포함돼 있지만 필요할 때만 로드 — 문서가 쓰는 만큼만 비용을 냅니다
@@ -142,6 +142,7 @@ Sources/MarkPad/
   EditorView.swift              아웃라인 / 편집기 / 미리보기 레이아웃, 툴바, 디바운스 렌더
   OutlineView.swift             제목 사이드바
   EditorMode.swift              일반 텍스트 vs 라이브 위지윅 모드 모델
+  ViewMode.swift                편집기 vs 분할 vs 미리보기 레이아웃 모델
   MarkdownTextView.swift        NSTextView 래퍼 (일반 텍스트 모드)
   WysiwygTextView.swift         MarkdownEngine 래퍼 (라이브 위지윅 모드)
   EditorSettingsView.swift      설정 → Editor 탭

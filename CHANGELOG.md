@@ -4,6 +4,22 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Added
+- **Click-to-Edit & Double-Click Transition in Preview Mode**:
+  - In Preview / Read-Only mode (`mode == .preview`), single-clicking on the document prompts a confirmation alert ("문서를 수정하시겠습니까?"), transitioning to edit mode upon confirmation.
+  - Double-clicking instantly transitions directly into edit mode without an alert popup.
+  - Hyperlinks, task checkboxes, and drag text selections are preserved and excluded from triggering edit transitions.
+- **Dedicated ViewMode Model**: Extracted `ViewMode` into `Sources/MarkPad/ViewMode.swift` with full unit test coverage in `ViewModeTests.swift`.
+
+### Changed
+- **Unified 3-Switch Window Layout Metaphor**:
+  - Replaced disparate toolbar icons (`square.and.pencil`, `rectangle.split.2x1`, `eye`) with cohesive window-layout SF Symbols:
+    - Editor only: `rectangle.leadinghalf.filled`
+    - Split (Editor + Preview): `rectangle.split.2x1`
+    - Preview only: `rectangle.trailinghalf.filled`
+  - Applied the unified 3-switch slider consistently across both Plain Text (Source) and Live WYSIWYG modes.
+  - Supported Split view in WYSIWYG mode for cross-referencing live rendered HTML, Mermaid diagrams, and KaTeX math alongside rich text.
+
 ## [0.5.0] - 2026-10-03
 
 ### Added

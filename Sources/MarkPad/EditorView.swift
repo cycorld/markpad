@@ -1,30 +1,5 @@
 import SwiftUI
 
-enum ViewMode: String, CaseIterable, Identifiable {
-    case editor, split, preview
-
-    static let storageKey = "viewMode"
-    static let defaultViewModeKey = "defaultViewMode"
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .editor: "Editor"
-        case .split: "Split"
-        case .preview: "Preview"
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .editor: "square.and.pencil"
-        case .split: "rectangle.split.2x1"
-        case .preview: "eye"
-        }
-    }
-}
-
 private struct FocusedViewModeKey: FocusedValueKey {
     typealias Value = Binding<ViewMode>
 }
@@ -66,6 +41,8 @@ struct EditorView: View {
     @State private var html = ""
     @State private var headings: [HeadingInfo] = []
     @State private var jump: JumpRequest?
+    @State private var showEditConfirmation = false
+    @State private var lastEditMode: ViewMode = .editor
 
     init(document: Binding<MarkdownDocument>, fileURL: URL?) {
         self._document = document
@@ -78,6 +55,7 @@ struct EditorView: View {
         let defaultView = UserDefaults.standard.string(forKey: ViewMode.defaultViewModeKey)
             .flatMap(ViewMode.init) ?? (defaultEditor == .wysiwyg ? .editor : .split)
         self._mode = State(initialValue: defaultView)
+        self._lastEditMode = State(initialValue: defaultView == .preview ? .editor : defaultView)
 
         let defaultOutline = UserDefaults.standard.bool(forKey: Self.outlineStorageKey)
         self._showOutline = State(initialValue: defaultOutline)
@@ -94,8 +72,16 @@ struct EditorView: View {
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
             if shouldShowPreview {
-                PreviewView(html: html, baseURL: directoryURL, jump: jump)
-                    .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
+                PreviewView(
+                    html: html,
+                    baseURL: directoryURL,
+                    jump: jump,
+                    isPreviewOnly: mode == .preview,
+                    onEditRequest: { immediate in
+                        handleEditRequest(immediate: immediate)
+                    }
+                )
+                .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .frame(minWidth: 520, minHeight: 360)
@@ -117,32 +103,52 @@ struct EditorView: View {
                 .pickerStyle(.segmented)
                 .help("Editor Mode: Source (plain text) or WYSIWYG (live rich text)")
 
-                if editorMode == .plain {
-                    Picker("View", selection: $mode) {
-                        ForEach(ViewMode.allCases) { item in
-                            Image(systemName: item.symbol).tag(item)
-                        }
+                Picker("View", selection: $mode) {
+                    ForEach(ViewMode.allCases) { item in
+                        Image(systemName: item.symbol).tag(item)
                     }
-                    .pickerStyle(.segmented)
-                    .help("Editor (⌘1) · Split (⌘2) · Preview (⌘3)")
-                } else {
-                    Picker("View", selection: Binding(
-                        get: { mode == .preview ? ViewMode.preview : ViewMode.editor },
-                        set: { mode = $0 }
-                    )) {
-                        Image(systemName: "square.and.pencil").tag(ViewMode.editor)
-                        Image(systemName: "eye").tag(ViewMode.preview)
-                    }
-                    .pickerStyle(.segmented)
-                    .help("WYSIWYG Editor (⌘1) · HTML Preview (⌘3)")
                 }
+                .pickerStyle(.segmented)
+                .help("Editor (⌘1) · Split (⌘2) · Preview (⌘3)")
             }
         }
         .focusedSceneValue(\.printSource, printSource)
         .focusedSceneValue(\.viewModeBinding, $mode)
         .focusedSceneValue(\.editorModeBinding, $editorMode)
         .focusedSceneValue(\.outlineBinding, $showOutline)
+        .alert("문서를 수정하시겠습니까?", isPresented: $showEditConfirmation) {
+            Button("수정") {
+                switchToEditMode()
+            }
+            Button("취소", role: .cancel) { }
+        } message: {
+            Text("보기 모드에서 편집 모드로 전환합니다.")
+        }
+        .onChange(of: mode) { oldMode, newMode in
+            if oldMode != .preview {
+                lastEditMode = oldMode
+            }
+        }
         .task(id: document.text) { await render(document.text) }
+    }
+
+    private func handleEditRequest(immediate: Bool) {
+        guard mode == .preview else { return }
+        if immediate {
+            switchToEditMode()
+        } else {
+            showEditConfirmation = true
+        }
+    }
+
+    private func switchToEditMode() {
+        withAnimation(.easeInOut(duration: 0.15)) {
+            if lastEditMode == .preview {
+                mode = .editor
+            } else {
+                mode = lastEditMode
+            }
+        }
     }
 
     private var directoryURL: URL? { fileURL?.deletingLastPathComponent() }
@@ -152,11 +158,7 @@ struct EditorView: View {
     }
 
     private var shouldShowPreview: Bool {
-        if editorMode == .wysiwyg {
-            // In WYSIWYG mode, preview is only shown when explicitly in Preview mode. Never side-by-side split.
-            return mode == .preview
-        }
-        return mode != .editor
+        mode != .editor
     }
 
     private var printSource: PrintSource {

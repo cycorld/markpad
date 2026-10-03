@@ -199,6 +199,67 @@ enum PreviewTemplate {
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
       if (lastHTML) window.__set(lastHTML);
     });
+
+    // Preview click & double-click interaction to switch to edit mode
+    (function () {
+      var clickTimer = null;
+      var mouseDownPos = null;
+      var isDragging = false;
+
+      document.addEventListener('mousedown', function (e) {
+        if (e.button !== 0) return;
+        mouseDownPos = { x: e.clientX, y: e.clientY };
+        isDragging = false;
+      });
+
+      document.addEventListener('mousemove', function (e) {
+        if (mouseDownPos) {
+          var dx = Math.abs(e.clientX - mouseDownPos.x);
+          var dy = Math.abs(e.clientY - mouseDownPos.y);
+          if (dx > 5 || dy > 5) {
+            isDragging = true;
+          }
+        }
+      });
+
+      document.addEventListener('mouseup', function () {
+        mouseDownPos = null;
+      });
+
+      document.addEventListener('click', function (e) {
+        if (e.button !== 0) return;
+        // Ignore clicks on links or interactive controls
+        if (e.target && (e.target.closest('a') || e.target.closest('button') || e.target.closest('input') || e.target.closest('summary'))) {
+          return;
+        }
+        // Ignore text selection drags
+        var selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 0) return;
+        if (isDragging) return;
+
+        if (clickTimer) {
+          clearTimeout(clickTimer);
+          clickTimer = null;
+        }
+
+        if (e.detail === 2) {
+          // Double click: switch to edit mode immediately
+          if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.markpadEdit) {
+            window.webkit.messageHandlers.markpadEdit.postMessage({ action: 'doubleClick' });
+          }
+        } else if (e.detail === 1) {
+          // Single click: prompt confirmation after double-click window expires
+          clickTimer = setTimeout(function () {
+            clickTimer = null;
+            var sel = window.getSelection();
+            if (sel && sel.toString().trim().length > 0) return;
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.markpadEdit) {
+              window.webkit.messageHandlers.markpadEdit.postMessage({ action: 'singleClick' });
+            }
+          }, 260);
+        }
+      });
+    })();
     </script>
     </body>
     </html>
