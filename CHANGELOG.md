@@ -4,6 +4,17 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-03
+
+### Added
+- Integrated Sparkle 2 auto-updater framework for true 1-click background download, atomic in-place app replacement, and automatic relaunch.
+- Cryptographically signed releases with Ed25519 (`SUPublicEDKey`).
+- Appcast feed (`appcast.xml`) for secure update discovery.
+- Native Sparkle update preferences in `Settings → Updates` (automatic check & automatic install toggles).
+
+### Removed
+- Legacy custom update checker and manual download redirect sheets.
+
 ## [0.4.2] - 2026-10-02
 
 ### Changed
@@ -78,7 +89,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/cycorld/markpad/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/cycorld/markpad/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/cycorld/markpad/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/cycorld/markpad/compare/v0.3.0...v0.4.0

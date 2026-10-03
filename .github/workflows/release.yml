@@ -26,12 +26,39 @@ jobs:
       - name: Checksums
         run: shasum -a 256 "MarkPad-${GITHUB_REF_NAME}.zip" > SHA256SUMS.txt
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install cryptography
+        run: pip install cryptography
+
+      - name: Update appcast.xml
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          BUILD=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" Info.plist)
+          python3 Scripts/update-appcast.py --zip "MarkPad-${GITHUB_REF_NAME}.zip" --version "$VERSION" --build "$BUILD" --appcast appcast.xml
+
+      - name: Commit and push appcast.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git add appcast.xml
+          git commit -m "chore(release): update appcast.xml for ${GITHUB_REF_NAME} [skip ci]" || echo "No changes to commit"
+          git push origin main
+
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v3
         with:
           files: |
             MarkPad-${{ github.ref_name }}.zip
             SHA256SUMS.txt
+            appcast.xml
           generate_release_notes: true
           body: |
             Universal binary (Apple silicon + Intel), macOS 14 or later.

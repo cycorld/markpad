@@ -14,11 +14,20 @@ BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/$APP"
 [ -d Assets/vendor ] || ./Scripts/fetch-vendor.sh
 
 rm -rf "$OUT"
-mkdir -p "$OUT/Contents/MacOS" "$OUT/Contents/Resources"
+mkdir -p "$OUT/Contents/MacOS" "$OUT/Contents/Resources" "$OUT/Contents/Frameworks"
 cp "$BIN" "$OUT/Contents/MacOS/"
 cp Info.plist "$OUT/Contents/"
 cp Assets/AppIcon.icns "$OUT/Contents/Resources/"
 cp -R Assets/vendor "$OUT/Contents/Resources/vendor"
+
+# Copy Sparkle.framework if present in build artifacts
+SPARKLE_FRAMEWORK=$(find .build -name "Sparkle.framework" -type d | head -n 1)
+if [ -n "$SPARKLE_FRAMEWORK" ]; then
+    cp -R "$SPARKLE_FRAMEWORK" "$OUT/Contents/Frameworks/"
+    codesign --force --sign - "$OUT/Contents/Frameworks/Sparkle.framework"
+fi
+
+install_name_tool -add_rpath @executable_path/../Frameworks "$OUT/Contents/MacOS/$APP" 2>/dev/null || true
 codesign --force --sign - "$OUT"
 echo "built $OUT"
 

@@ -1,9 +1,15 @@
+import Sparkle
 import SwiftUI
 import UniformTypeIdentifiers
 
 @main
 struct MarkPadApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    private let updaterController: SPUStandardUpdaterController
+
+    init() {
+        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+    }
 
     var body: some Scene {
         DocumentGroup(newDocument: MarkdownDocument()) { file in
@@ -11,9 +17,7 @@ struct MarkPadApp: App {
         }
         .commands {
             CommandGroup(after: .appInfo) {
-                Button("Check for Updates…") {
-                    UpdateChecker.shared.checkForUpdates(explicit: true)
-                }
+                CheckForUpdatesView(updater: updaterController.updater)
             }
             CommandGroup(after: .pasteboard) {
                 FindCommands()
@@ -37,7 +41,7 @@ struct MarkPadApp: App {
                     .tabItem {
                         Label("Print", systemImage: "printer")
                     }
-                UpdateSettingsView()
+                SparkleSettingsView(updater: updaterController.updater)
                     .tabItem {
                         Label("Updates", systemImage: "arrow.triangle.2.circlepath")
                     }
