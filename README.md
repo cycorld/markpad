@@ -24,7 +24,7 @@ A small native markdown editor for macOS: edit on the left, live preview on the 
 - **Documents** — New / Open / Save / autosave / window restoration; owns `.md` `.markdown` `.mdown` `.mkd`
 - **View modes** — Editor (⌘1) · Split (⌘2) · Preview (⌘3)
 - **Local images** — paths relative to the document work (served through a `markpad://` URL scheme handler, no private API)
-- **Updates** — In-app update checking (MarkPad → Check for Updates… and Settings → Updates) using GitHub Releases as the single source of truth; shows release notes and direct download
+- **Updates** — In-app auto-update powered by Sparkle 2 with Ed25519 cryptographic signatures; supports background checks, 1-click update, and seamless automatic relaunch (MarkPad → Check for Updates… and Settings → Updates)
 - KaTeX, Mermaid and highlight.js are bundled but loaded lazily — a document only pays for what it uses
 
 ## Install
@@ -82,7 +82,7 @@ Double-clicking `.md`, `.markdown`, `.mdown` and `.mkd` files now opens them in 
 
 ### Updating
 
-MarkPad checks for new GitHub Releases automatically once a day (if enabled in **Settings → Updates**), or on demand via **MarkPad → Check for Updates…**. When a new release is found, it presents the release notes and direct download link.
+MarkPad checks for new updates automatically in the background (configured in **Settings → Updates**), or on demand via **MarkPad → Check for Updates…**. Powered by Sparkle 2 with Ed25519 cryptographic signing, updates can be downloaded and installed in-place with a single click, automatically relaunching the app.
 
 Alternatively, you can manually download the new zip from the [latest release](https://github.com/cycorld/markpad/releases/latest) and replace `MarkPad.app` in `Applications`. Your settings (view mode, outline, print header/footer, update preferences) live in macOS user defaults and survive the swap. Gatekeeper treats manually replaced copies as a new download, so run step 2 again.
 
@@ -155,12 +155,8 @@ Sources/MarkPad/
   PrintOptions.swift            header / footer templates, page-number styles (UserDefaults)
   PrintSettingsView.swift       Settings → Print
   SemanticVersion.swift         SemVer 2.0.0 parsing and precedence comparison
-  GitHubRelease.swift           GitHub Releases API models and asset lookup
-  UpdateChecker.swift           GitHub release SSOT update checker and timer
-  UpdateView.swift              Software update dialog UI
-  UpdateWindowController.swift  AppKit window controller for update dialog
-  UpdateSettingsView.swift      Settings → Updates tab
-Scripts/                        make-icon.swift, fetch-vendor.sh
+  SparkleUpdater.swift          Sparkle 2 SwiftUI bindings and Settings view
+Scripts/                        make-icon.swift, fetch-vendor.sh, update-appcast.py
 build.sh                        assembles the .app bundle
 ```
 

@@ -45,13 +45,13 @@ struct SparkleSettingsView: View {
         Form {
             Section("Automatic Updates") {
                 Toggle("Automatically check for updates", isOn: $automaticallyChecksForUpdates)
-                    .onChange(of: automaticallyChecksForUpdates) { newValue in
+                    .onChange(of: automaticallyChecksForUpdates) { _, newValue in
                         updater.automaticallyChecksForUpdates = newValue
                     }
 
                 Toggle("Automatically download and install updates", isOn: $automaticallyDownloadsUpdates)
                     .disabled(!automaticallyChecksForUpdates)
-                    .onChange(of: automaticallyDownloadsUpdates) { newValue in
+                    .onChange(of: automaticallyDownloadsUpdates) { _, newValue in
                         updater.automaticallyDownloadsUpdates = newValue
                     }
             }
