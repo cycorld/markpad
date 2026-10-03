@@ -5,5 +5,17 @@
         <link>https://github.com/cycorld/markpad</link>
         <description>Most recent updates to MarkPad</description>
         <language>en</language>
+        <item>
+            <title>Version 0.5.0</title>
+            <sparkle:releaseNotesLink>https://github.com/cycorld/markpad/releases/tag/v0.5.0</sparkle:releaseNotesLink>
+            <pubDate>Sat, 03 Oct 2026 11:04:48 +0000</pubDate>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/cycorld/markpad/releases/download/v0.5.0/MarkPad-v0.5.0.zip"
+                       sparkle:version="10"
+                       sparkle:shortVersionString="0.5.0"
+                       sparkle:edSignature="w2kj4yX9rhDtyAu+Hq39pIDf6dOkajFV0abaT7X7AvR2F4VwU0wBHQTDQhTXfI3XTJDrgmFu6tpWnZLej9EkAQ=="
+                       length="7312298"
+                       type="application/octet-stream" />
+        </item>
     </channel>
 </rss>

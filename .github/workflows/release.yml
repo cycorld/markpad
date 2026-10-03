@@ -42,16 +42,6 @@ jobs:
           BUILD=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" Info.plist)
           python3 Scripts/update-appcast.py --zip "MarkPad-${GITHUB_REF_NAME}.zip" --version "$VERSION" --build "$BUILD" --appcast appcast.xml
 
-      - name: Commit and push appcast.xml
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git checkout main
-          git add appcast.xml
-          git commit -m "chore(release): update appcast.xml for ${GITHUB_REF_NAME} [skip ci]" || echo "No changes to commit"
-          git push origin main
-
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v3
         with:
@@ -66,3 +56,21 @@ jobs:
             The app is ad-hoc signed and not notarized, so macOS blocks the first launch.
             Either allow it in System Settings → Privacy & Security → "Open Anyway", or run
             `xattr -d com.apple.quarantine /Applications/MarkPad.app`. See the README's Install section.
+
+      - name: Commit and push appcast.xml
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git add appcast.xml
+          git commit -m "chore(release): update appcast.xml for ${GITHUB_REF_NAME} [skip ci]" || echo "No changes to commit"
+          git push origin main || {
+            echo "Direct push to main declined by branch protection. Pushing to branch..."
+            BRANCH="update-appcast-${GITHUB_REF_NAME}"
+            git checkout -b "$BRANCH"
+            git push -f origin "$BRANCH" || true
+          }
