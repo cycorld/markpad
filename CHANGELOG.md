@@ -4,6 +4,12 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-03
+
+### Fixed
+- **App Launch Crash**: Bundled SwiftPM resource bundles (`Highlighter_Highlighter.bundle`) into `MarkPad.app/Contents/Resources/` to satisfy `Bundle.module` runtime requirements.
+- **Gatekeeper & Code Signature Integrity**: Enforced `--deep` recursive code signing across all nested frameworks (`Sparkle.framework`), helper XPC services, and resource bundles.
+
 ## [0.5.0] - 2026-10-03
 
 ### Added
@@ -107,7 +113,8 @@ All notable changes to MarkPad are documented here. The format follows [Keep a C
 - Document-based app: open / save / autosave / window restoration, owns `.md` files
 - `build.sh` bundle assembly with generated icon and pinned vendor assets
 
-[Unreleased]: https://github.com/cycorld/markpad/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/cycorld/markpad/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/cycorld/markpad/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/cycorld/markpad/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/cycorld/markpad/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/cycorld/markpad/compare/v0.4.0...v0.4.1

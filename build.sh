@@ -20,15 +20,26 @@ cp Info.plist "$OUT/Contents/"
 cp Assets/AppIcon.icns "$OUT/Contents/Resources/"
 cp -R Assets/vendor "$OUT/Contents/Resources/vendor"
 
+# Copy all SPM resource bundles (*.bundle) into Contents/Resources/
+find .build -type d -name "*.bundle" | while read -r bundle; do
+    echo "Copying resource bundle $bundle -> $OUT/Contents/Resources/"
+    cp -R "$bundle" "$OUT/Contents/Resources/"
+done
+
+for b in "$OUT/Contents/Resources/"*.bundle; do
+    [ -d "$b" ] || continue
+    codesign --force --sign - "$b" 2>/dev/null || true
+done
+
 # Copy Sparkle.framework if present in build artifacts
 SPARKLE_FRAMEWORK=$(find .build -name "Sparkle.framework" -type d | head -n 1)
 if [ -n "$SPARKLE_FRAMEWORK" ]; then
     cp -R "$SPARKLE_FRAMEWORK" "$OUT/Contents/Frameworks/"
-    codesign --force --sign - "$OUT/Contents/Frameworks/Sparkle.framework"
+    codesign --force --deep --sign - "$OUT/Contents/Frameworks/Sparkle.framework"
 fi
 
 install_name_tool -add_rpath @executable_path/../Frameworks "$OUT/Contents/MacOS/$APP" 2>/dev/null || true
-codesign --force --sign - "$OUT"
+codesign --force --deep --sign - "$OUT"
 echo "built $OUT"
 
 if [ "${1:-}" = "--install" ]; then
