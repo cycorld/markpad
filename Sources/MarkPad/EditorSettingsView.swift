@@ -69,7 +69,7 @@ struct EditorSettingsView: View {
     }
 
     private var modeDescription: String {
-        switch editorMode {
+        switch defaultEditorMode {
         case .plain:
             return "Displays markdown as plain monospace text. Fast and simple."
         case .wysiwyg:
