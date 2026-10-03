@@ -8,7 +8,6 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.register(defaults: PrintOptions.defaults)
-        UserDefaults.standard.register(defaults: UpdateChecker.defaults)
         UserDefaults.standard.register(defaults: [
             EditorMode.defaultModeKey: EditorMode.wysiwyg.rawValue,
             ViewMode.defaultViewModeKey: ViewMode.split.rawValue,
@@ -23,9 +22,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             Self.closeBlankUntitledDocuments()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            UpdateChecker.shared.checkOnLaunchIfNeeded()
         }
     }
 
